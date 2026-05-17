@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVIDAA Bitcoin — Live Intelligence</title>
+<style>
+:root{
+  --bg:#060810;--bg2:#0d1117;--bg3:#131a26;--bg4:#1a2235;
+  --gold:#f7931a;--gold2:#ffb347;--gold3:#ffd580;
+  --cyan:#00e5ff;--cyan2:#00b4cc;
+  --red:#ff3b3b;--green:#00e676;
+  --text:#e8eaf0;--text2:#8fa0b8;--text3:#4a5770;
+  --border:#1e2a3d;--border2:#2a3a55;
+  --glow:0 0 20px rgba(247,147,26,0.3);
+  --font:'Space Mono',monospace;
+  --fontb:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;overflow-x:hidden}
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+
+/* ── TOP BAR ── */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(6,8,16,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:52px;gap:12px}
+#topbar .logo{font-family:var(--fontb);font-weight:800;font-size:18px;color:var(--gold);letter-spacing:-0.5px;white-space:nowrap}
+#topbar .logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:6px}
+#live-ticker{display:flex;align-items:center;gap:16px;margin-left:auto;flex-wrap:wrap}
+.tick-item{display:flex;align-items:center;gap:6px;font-size:12px}
+.tick-label{color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-size:10px}
+.tick-val{font-weight:700;color:var(--text)}
+.tick-up{color:var(--green)}
+.tick-dn{color:var(--red)}
+#btc-price{font-size:16px;font-weight:700;color:var(--gold)}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* ── NAV ── */
+#nav{position:fixed;top:52px;left:0;right:0;z-index:999;background:rgba(6,8,16,0.95);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 8px;gap:2px}
+#nav::-webkit-scrollbar{height:2px}#nav::-webkit-scrollbar-thumb{background:var(--gold)}
+.nav-btn{padding:10px 16px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:var(--fontb);font-size:12px;font-weight:600;letter-spacing:0.5px;white-space:nowrap;text-transform:uppercase;border-bottom:2px solid transparent;transition:all 0.2s}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── PAGES ── */
+.page{display:none;padding:120px 16px 40px;max-width:1400px;margin:0 auto;min-height:100vh}
+.page.active{display:block}
+.page-wide{max-width:100%!important;padding-left:0!important;padding-right:0!important}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.card-header{font-family:var(--fontb);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
+.metric{display:flex;flex-direction:column;gap:4px}
+.metric-val{font-size:28px;font-weight:700;color:var(--text);font-family:var(--fontb)}
+.metric-val.gold{color:var(--gold)}
+.metric-sub{font-size:11px;color:var(--text3)}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px}
+.badge-up{background:rgba(0,230,118,0.15);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
+.badge-dn{background:rgba(255,59,59,0.15);color:var(--red);border:1px solid rgba(255,59,59,0.3)}
+.badge-neutral{background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.2)}
+
+/* ── GRID LAYOUTS ── */
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:16px}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-family:var(--fontb);font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px}
+.sec-title .hl{color:var(--gold)}
+.sec-sub{color:var(--text2);font-size:13px;margin-bottom:24px;line-height:1.6}
+
+/* ── FEAR GREED ── */
+#fg-gauge{position:relative;width:180px;height:90px;margin:8px auto}
+#fg-gauge svg{width:100%;height:100%}
+#fg-number{font-family:var(--fontb);font-size:36px;font-weight:800;text-align:center;margin-top:4px}
+#fg-label{text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text3)}
+
+/* ── TIMELINE TABLE ── */
+.timeline-table{width:100%;border-collapse:collapse;font-size:13px}
+.timeline-table th{background:var(--bg3);color:var(--text3);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;text-align:left;position:sticky;top:104px;z-index:10}
+.timeline-table td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+.timeline-table tr:hover td{background:var(--bg3)}
+.timeline-table .era{background:rgba(247,147,26,0.08);color:var(--gold);font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.timeline-table .event-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.event-tag{background:var(--bg4);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:10px;border:1px solid var(--border2)}
+.event-tag.bull{color:var(--green);border-color:rgba(0,230,118,0.2);background:rgba(0,230,118,0.08)}
+.event-tag.bear{color:var(--red);border-color:rgba(255,59,59,0.2);background:rgba(255,59,59,0.08)}
+.event-tag.halving{color:var(--gold);border-color:rgba(247,147,26,0.3);background:rgba(247,147,26,0.1)}
+
+/* ── BLOCKCHAIN EXPLORER ── */
+#explorer-form{display:flex;gap:8px;margin-bottom:24px}
+#explorer-input{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--font);font-size:13px;outline:none}
+#explorer-input:focus{border-color:var(--gold)}
+#explorer-btn{background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px 20px;cursor:pointer;font-family:var(--fontb);font-weight:700;font-size:13px;transition:all 0.2s}
+#explorer-btn:hover{background:var(--gold2)}
+.explorer-tabs{display:flex;gap:8px;margin-bottom:16px}
+.explorer-tab{padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--fontb);transition:all 0.2s}
+.explorer-tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
+#explorer-result{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;min-height:100px;font-size:13px;line-height:1.8}
+.result-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.result-row:last-child{border-bottom:none}
+.result-key{color:var(--text3);min-width:160px;font-size:11px;letter-spacing:0.5px;text-transform:uppercase}
+.result-val{color:var(--text);word-break:break-all;flex:1}
+.result-val a{color:var(--cyan);text-decoration:none}
+.result-val a:hover{text-decoration:underline}
+.loading-dots::after{content:'...';animation:dots 1.5s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+
+/* ── WALLETS ── */
+.wallet-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.wallet-row:hover{background:var(--bg3)}
+.wallet-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.wallet-name{font-family:var(--fontb);font-weight:600;font-size:14px}
+.wallet-addr{font-size:11px;color:var(--text3);font-family:var(--font);margin-top:2px}
+.wallet-btc{font-weight:700;color:var(--gold);text-align:right;font-family:var(--fontb)}
+.wallet-usd{font-size:11px;color:var(--text3);text-align:right}
+.wallet-badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:0.5px;white-space:nowrap}
+
+/* ── GLOSSARY ── */
+.glossary-alpha{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.alpha-btn{width:36px;height:36px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text2);cursor:pointer;font-family:var(--fontb);font-size:13px;font-weight:700;transition:all 0.2s}
+.alpha-btn:hover,.alpha-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.gloss-group{margin-bottom:32px}
+.gloss-letter{font-family:var(--fontb);font-size:32px;font-weight:800;color:var(--gold);border-bottom:2px solid var(--gold);padding-bottom:8px;margin-bottom:16px;display:inline-block}
+.gloss-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:10px}
+.gloss-term{font-family:var(--fontb);font-weight:700;font-size:15px;color:var(--gold2);margin-bottom:6px}
+.gloss-def{color:var(--text2);line-height:1.7;font-size:13px}
+.gloss-tag{display:inline-block;background:var(--bg4);color:var(--cyan);font-size:10px;padding:2px 8px;border-radius:4px;margin-right:6px;border:1px solid rgba(0,229,255,0.2)}
+#gloss-search{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--font);font-size:13px;outline:none;margin-bottom:20px}
+#gloss-search:focus{border-color:var(--gold)}
+
+/* ── PATTERNS ── */
+.pattern-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px}
+.pattern-title{font-family:var(--fontb);font-weight:700;font-size:18px;color:var(--text);margin-bottom:8px}
+.pattern-sub{color:var(--text3);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.cycle-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));margin:8px 0;position:relative}
+.cycle-marker{position:absolute;top:-4px;width:16px;height:16px;background:var(--text);border-radius:50%;transform:translateX(-50%);border:2px solid var(--bg)}
+.phase-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.phase-chip{padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--fontb)}
+.on-chain-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.on-chain-row:last-child{border-bottom:none}
+.on-chain-name{font-size:13px;color:var(--text2)}
+.on-chain-val{font-family:var(--fontb);font-weight:700}
+.on-chain-desc{font-size:11px;color:var(--text3);max-width:260px;text-align:right}
+
+/* ── BLOG ── */
+.blog-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s}
+.blog-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.blog-img{height:160px;background:linear-gradient(135deg,var(--bg3),var(--bg4));display:flex;align-items:center;justify-content:center;font-size:48px;border-bottom:1px solid var(--border)}
+.blog-body{padding:20px}
+.blog-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.blog-title{font-family:var(--fontb);font-weight:700;font-size:16px;color:var(--text);margin-bottom:8px;line-height:1.4}
+.blog-excerpt{color:var(--text2);font-size:12px;line-height:1.7}
+.blog-meta{display:flex;gap:12px;margin-top:12px;color:var(--text3);font-size:11px;align-items:center}
+
+/* ── TOOLS ── */
+.tools-section{margin-bottom:32px}
+.tools-section-title{font-family:var(--fontb);font-weight:700;color:var(--gold);font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.tool-link{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;text-decoration:none;transition:all 0.15s}
+.tool-link:hover{border-color:var(--gold);background:var(--bg3)}
+.tool-icon{width:32px;height:32px;background:var(--bg4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tool-name{font-family:var(--fontb);font-weight:600;font-size:14px;color:var(--text)}
+.tool-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.tool-tag{margin-left:auto;font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.2)}
+
+/* ── SCROLL BAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── HALVING COUNTDOWN ── */
+.countdown-box{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.countdown-unit{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
+.countdown-num{font-family:var(--fontb);font-size:28px;font-weight:800;color:var(--gold)}
+.countdown-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-top:4px}
+
+/* ── MARQUEE ── */
+.marquee-wrap{overflow:hidden;background:var(--bg3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 0}
+.marquee-track{display:flex;gap:40px;animation:marquee 30s linear infinite;white-space:nowrap}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.marquee-item .m-key{color:var(--text3);margin-right:2px}
+
+/* ── MISC ── */
+.separator{border:none;border-top:1px solid var(--border);margin:24px 0}
+.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fontb);font-weight:700;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.muted{color:var(--text3)}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+.mono{font-family:var(--font)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+  #live-ticker .tick-item:nth-child(n+4){display:none}
+  .wallet-row{grid-template-columns:auto 1fr}
+  .wallet-btc,.wallet-usd{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="logo">AVIDAA <span>BITCOIN</span></div>
+  <div id="live-ticker">
+    <div class="tick-item"><span class="tick-label">BTC</span><span id="btc-price" class="tick-val pulse">—</span></div>
+    <div class="tick-item"><span class="tick-label">24h</span><span id="btc-change" class="tick-val">—</span></div>
+    <div class="tick-item"><span class="tick-label">MCap</span><span id="btc-mcap" class="tick-val">—</span></div>
+    <div class="tick-item"><span class="tick-label">Dom</span><span id="btc-dom" class="tick-val">—</span></div>
+    <div class="tick-item"><span class="tick-label">F&amp;G</span><span id="fg-tick" class="tick-val">—</span></div>
+    <div class="tick-item"><span class="tick-label">Block</span><span id="block-height" class="tick-val">—</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <button class="nav-btn active" onclick="go('home')">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="go('timeline')">📅 Timeline</button>
+  <button class="nav-btn" onclick="go('explorer')">🔍 Explorer</button>
+  <button class="nav-btn" onclick="go('wallets')">🐳 Whales</button>
+  <button class="nav-btn" onclick="go('patterns')">📊 Patterns</button>
+  <button class="nav-btn" onclick="go('glossary')">📖 Glossary</button>
+  <button class="nav-btn" onclick="go('blog')">📝 Blog</button>
+  <button class="nav-btn" onclick="go('tools')">🛠 Tools</button>
+</nav>
+
+<!-- MARQUEE -->
+<div style="position:fixed;top:100px;left:0;right:0;z-index:998" id="marquee-container">
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-item">⛏️ <span class="m-key">Hashrate</span><span id="m-hashrate">—</span></span>
+      <span class="marquee-item">💱 <span class="m-key">24h Vol</span><span id="m-vol">—</span></span>
+      <span class="marquee-item">📦 <span class="m-key">Block</span><span id="m-block">—</span></span>
+      <span class="marquee-item">💸 <span class="m-key">Fee (fast)</span><span id="m-fee">—</span> sat/vB</span>
+      <span class="marquee-item">🔒 <span class="m-key">Supply</span>19.88M / 21M BTC</span>
+      <span class="marquee-item">📉 <span class="m-key">ATH</span>$126,200 (Oct 6, 2025)</span>
+      <span class="marquee-item">✂️ <span class="m-key">Next Halving</span><span id="m-halving">~Apr 2028</span></span>
+      <span class="marquee-item">⚡ <span class="m-key">Lightning</span>~5,600 BTC capacity</span>
+      <span class="marquee-item">🌍 <span class="m-key">Nodes</span>~18,000 reachable</span>
+      <!-- duplicate for seamless loop -->
+      <span class="marquee-item">⛏️ <span class="m-key">Hashrate</span><span class="m-hashrate-2">—</span></span>
+      <span class="marquee-item">💱 <span class="m-key">24h Vol</span><span class="m-vol-2">—</span></span>
+      <span class="marquee-item">📦 <span class="m-key">Block</span><span class="m-block-2">—</span></span>
+      <span class="marquee-item">💸 <span class="m-key">Fee (fast)</span><span class="m-fee-2">—</span> sat/vB</span>
+      <span class="marquee-item">🔒 <span class="m-key">Supply</span>19.88M / 21M BTC</span>
+      <span class="marquee-item">📉 <span class="m-key">ATH</span>$126,200 (Oct 6, 2025)</span>
+      <span class="marquee-item">✂️ <span class="m-key">Next Halving</span>~Apr 2028</span>
+      <span class="marquee-item">⚡ <span class="m-key">Lightning</span>~5,600 BTC capacity</span>
+    </div>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: HOME ████████████████ -->
+<div id="page-home" class="page active" style="padding-top:140px">
+  <div class="sec-title">Live <span class="hl">Bitcoin</span> Intelligence</div>
+  <div class="sec-sub">Real-time data · On-chain analytics · Market sentiment — updated every 30 seconds</div>
+
+  <!-- PRICE CARDS -->
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">BTC / USD</div>
+      <div class="metric">
+        <div class="metric-val gold" id="card-price">Loading…</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+          <span class="badge" id="card-change-badge">—</span>
+          <span class="metric-sub" id="card-change-usd">—</span>
+        </div>
+        <div class="metric-sub" style="margin-top:4px">24h High: <span id="card-high">—</span> · Low: <span id="card-low">—</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Market Cap</div>
+      <div class="metric">
+        <div class="metric-val" id="card-mcap">—</div>
+        <div class="metric-sub">Fully Diluted: <span id="card-fdv">—</span></div>
+        <div class="metric-sub" style="margin-top:4px">BTC Dominance: <span id="card-dom">—</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Volume &amp; Supply</div>
+      <div class="metric">
+        <div class="metric-val" id="card-vol">—</div>
+        <div class="metric-sub">24h Volume</div>
+        <div class="metric-sub" style="margin-top:4px">Circulating: 19,880,000 BTC<br>Max: 21,000,000 BTC</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Fear &amp; Greed Index</div>
+      <div id="fg-gauge">
+        <svg viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gaugeFill" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#ff3b3b"/>
+              <stop offset="25%" style="stop-color:#ff9800"/>
+              <stop offset="50%" style="stop-color:#ffeb3b"/>
+              <stop offset="75%" style="stop-color:#8bc34a"/>
+              <stop offset="100%" style="stop-color:#00e676"/>
+            </linearGradient>
+          </defs>
+          <path d="M 10 85 A 80 80 0 0 1 170 85" fill="none" stroke="#1e2a3d" stroke-width="14" stroke-linecap="round"/>
+          <path d="M 10 85 A 80 80 0 0 1 170 85" fill="none" stroke="url(#gaugeFill)" stroke-width="14" stroke-linecap="round"/>
+          <line id="gauge-needle" x1="90" y1="85" x2="90" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-90,90,85)"/>
+          <circle cx="90" cy="85" r="5" fill="white"/>
+        </svg>
+      </div>
+      <div id="fg-number" class="metric-val" style="text-align:center">—</div>
+      <div id="fg-label">—</div>
+    </div>
+  </div>
+
+  <!-- HALVING COUNTDOWN + SUPPLY ROW -->
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">⏳ Next Halving Countdown (Est. Apr 2028)</div>
+      <div class="countdown-box" id="countdown-box">
+        <div class="countdown-unit"><div class="countdown-num" id="cd-d">—</div><div class="countdown-lbl">Days</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-h">—</div><div class="countdown-lbl">Hours</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-m">—</div><div class="countdown-lbl">Min</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-s">—</div><div class="countdown-lbl">Sec</div></div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:var(--text3)">
+        Block reward will drop from <strong style="color:var(--gold)">3.125 BTC</strong> → <strong style="color:var(--gold)">1.5625 BTC</strong> at block 1,050,000
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">⛏️ Mining Dashboard</div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Hashrate</span>
+        <span class="on-chain-val" id="dash-hashrate">— EH/s</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Difficulty</span>
+        <span class="on-chain-val" id="dash-diff">—</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Block Height</span>
+        <span class="on-chain-val" id="dash-block">—</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Mempool Fee (fast)</span>
+        <span class="on-chain-val" id="dash-fee">— sat/vB</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Block Reward</span>
+        <span class="on-chain-val" style="color:var(--gold)">3.125 BTC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HALVING HISTORY TABLE -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">✂️ Halving History</div>
+    <div style="overflow-x:auto">
+      <table class="timeline-table">
+        <thead><tr>
+          <th>#</th><th>Date</th><th>Block</th><th>Reward Before</th><th>Reward After</th><th>Price at Halving</th><th>ATH Post-Halving</th><th>Gain</th><th>Time to ATH</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>Nov 28, 2012</td><td>210,000</td><td>50 BTC</td><td>25 BTC</td><td>$12.35</td><td>$1,163 (Nov 2013)</td><td class="tick-up">+9,335%</td><td>~12 months</td>
+          </tr>
+          <tr>
+            <td>2</td><td>Jul 9, 2016</td><td>420,000</td><td>25 BTC</td><td>12.5 BTC</td><td>$650</td><td>$19,783 (Dec 2017)</td><td class="tick-up">+2,944%</td><td>~17 months</td>
+          </tr>
+          <tr>
+            <td>3</td><td>May 11, 2020</td><td>630,000</td><td>12.5 BTC</td><td>6.25 BTC</td><td>$8,700</td><td>$69,044 (Nov 2021)</td><td class="tick-up">+693%</td><td>~18 months</td>
+          </tr>
+          <tr>
+            <td>4</td><td>Apr 19, 2024</td><td>840,000</td><td>6.25 BTC</td><td>3.125 BTC</td><td>$63,800</td><td>$126,200 (Oct 2025)</td><td class="tick-up">+98%</td><td>~18 months</td>
+          </tr>
+          <tr style="opacity:0.5">
+            <td>5</td><td>~Apr 2028</td><td>1,050,000</td><td>3.125 BTC</td><td>1.5625 BTC</td><td>TBD</td><td>TBD</td><td>—</td><td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LIVE CMC EMBED LINK -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">📈 Live Price Chart — CoinMarketCap</div>
+    <div style="text-align:center;padding:20px">
+      <p style="color:var(--text2);margin-bottom:16px">Full interactive chart with order book, historical data and community sentiment</p>
+      <a href="https://coinmarketcap.com/currencies/bitcoin/" target="_blank" class="btn btn-gold">🌐 Open CMC Bitcoin Page</a>
+      &nbsp;
+      <a href="https://www.tradingview.com/chart/?symbol=BITSTAMP%3ABTCUSD" target="_blank" class="btn btn-outline">📊 TradingView Chart</a>
+    </div>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: TIMELINE ████████████████ -->
+<div id="page-timeline" class="page">
+  <div class="sec-title">Bitcoin <span class="hl">Price Timeline</span></div>
+  <div class="sec-sub">Every major era, ATH, crash, halving, and catalyst — 2009 to May 2026</div>
+  <div style="overflow-x:auto">
+  <table class="timeline-table" id="timeline-table">
+    <thead><tr>
+      <th>Date</th><th>Price</th><th>Event</th><th>Type</th>
+    </tr></thead>
+    <tbody id="timeline-body"></tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: EXPLORER ████████████████ -->
+<div id="page-explorer" class="page">
+  <div class="sec-title">Blockchain <span class="hl">Explorer</span></div>
+  <div class="sec-sub">Search any Bitcoin address, transaction ID (txid), or block height/hash — powered by Blockstream &amp; Mempool.space</div>
+
+  <div id="explorer-form">
+    <input id="explorer-input" type="text" placeholder="Enter address, txid or block height…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button id="explorer-btn" onclick="exploreSearch()">Search</button>
+  </div>
+
+  <div class="explorer-tabs">
+    <button class="explorer-tab active" onclick="setExplorerMode('auto')">Auto-detect</button>
+    <button class="explorer-tab" onclick="setExplorerMode('address')">Address</button>
+    <button class="explorer-tab" onclick="setExplorerMode('tx')">Transaction</button>
+    <button class="explorer-tab" onclick="setExplorerMode('block')">Block</button>
+  </div>
+
+  <div id="explorer-result">
+    <p style="color:var(--text3);text-align:center;padding:20px">Enter a Bitcoin address, transaction ID or block number above to search the blockchain.</p>
+  </div>
+
+  <hr class="separator">
+
+  <div class="grid-2" style="margin-top:8px">
+    <div class="card">
+      <div class="card-header">🔗 External Explorers</div>
+      <a href="https://mempool.space" target="_blank" class="tool-link" style="margin-bottom:8px">
+        <div class="tool-icon">🌊</div>
+        <div><div class="tool-name">Mempool.space</div><div class="tool-desc">Best real-time mempool &amp; fee visualization</div></div>
+        <span class="tool-tag">Free · Live</span>
+      </a>
+      <a href="https://blockstream.info" target="_blank" class="tool-link" style="margin-bottom:8px">
+        <div class="tool-icon">⚡</div>
+        <div><div class="tool-name">Blockstream Explorer</div><div class="tool-desc">Full node API, raw TX data, proofs</div></div>
+        <span class="tool-tag">Free · API</span>
+      </a>
+      <a href="https://www.blockchain.com/explorer/bitcoin" target="_blank" class="tool-link" style="margin-bottom:8px">
+        <div class="tool-icon">🔗</div>
+        <div><div class="tool-name">Blockchain.com Explorer</div><div class="tool-desc">Charts, pools, rich-list</div></div>
+        <span class="tool-tag">Free</span>
+      </a>
+      <a href="https://btcscan.org" target="_blank" class="tool-link">
+        <div class="tool-icon">🔎</div>
+        <div><div class="tool-name">BTCScan.org</div><div class="tool-desc">Clean explorer with wallet stats</div></div>
+        <span class="tool-tag">Free</span>
+      </a>
+    </div>
+    <div class="card">
+      <div class="card-header">📦 Latest Block Info</div>
+      <div id="latest-block-info" style="color:var(--text3)">Loading latest block…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: WHALES ████████████████ -->
+<div id="page-wallets" class="page">
+  <div class="sec-title">🐳 Major Bitcoin <span class="hl">Wallets</span></div>
+  <div class="sec-sub">Known exchange cold wallets, corporate treasuries, government holdings, and legendary addresses. Data from on-chain analytics and public disclosures.</div>
+
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="card"><div class="card-header">Corporate Treasuries</div><div class="metric-val gold" id="stat-corp">~1.1M BTC</div><div class="metric-sub">across ~80+ public companies</div></div>
+    <div class="card"><div class="card-header">Government Holdings</div><div class="metric-val gold" id="stat-gov">~620K BTC</div><div class="metric-sub">US, China, UK + others</div></div>
+    <div class="card"><div class="card-header">Exchange Cold Wallets</div><div class="metric-val gold">~2.8M BTC</div><div class="metric-sub">est. across all major exchanges</div></div>
+    <div class="card"><div class="card-header">Satoshi's Coins</div><div class="metric-val gold">~1.1M BTC</div><div class="metric-sub">Never moved since 2010</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">Verify any wallet balance live</div>
+    <div style="display:flex;gap:8px">
+      <input id="wallet-check-input" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:12px;outline:none" placeholder="Bitcoin address to check (bc1… or 1… or 3…)">
+      <button class="btn btn-gold" onclick="checkWalletBalance()">Check Balance</button>
+    </div>
+    <div id="wallet-check-result" style="margin-top:12px;display:none"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Known Major Addresses &amp; Entities</div>
+    <div id="wallets-list"></div>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: PATTERNS ████████████████ -->
+<div id="page-patterns" class="page">
+  <div class="sec-title">Market <span class="hl">Patterns</span></div>
+  <div class="sec-sub">Bitcoin cycle analysis, on-chain indicators, and sentiment patterns — understand where we are in the cycle</div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="pattern-card">
+      <div class="pattern-sub">4-Year Cycle Model</div>
+      <div class="pattern-title">Current Position (May 2026)</div>
+      <div class="cycle-bar">
+        <div class="cycle-marker" style="left:65%" title="We are here"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
+        <span>Accumulation</span><span>Markup</span><span>Distribution</span><span>Markdown</span>
+      </div>
+      <div class="phase-list" style="margin-top:16px">
+        <span class="phase-chip" style="background:rgba(0,230,118,0.15);color:var(--green)">✅ Post-ATH Correction</span>
+        <span class="phase-chip" style="background:rgba(247,147,26,0.15);color:var(--gold)">⏳ Re-accumulation Phase</span>
+        <span class="phase-chip" style="background:rgba(0,229,255,0.1);color:var(--cyan)">📊 MVRV Below Red Zone</span>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:var(--text2);line-height:1.7">
+        Bitcoin peaked at <strong style="color:var(--gold)">$126,200 (Oct 6, 2025)</strong> — 18 months post-April 2024 halving, consistent with historical patterns. The current ~37% drawdown from ATH to ~$80K is textbook post-distribution correction. Historical precedent: 2018 (-84%), 2022 (-77%). This correction is significantly shallower — suggesting structural change from ETF institutional demand floor.
+      </div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-sub">On-Chain Signal Dashboard</div>
+      <div class="pattern-title">Key Indicators (May 2026)</div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">MVRV Z-Score</span>
+        <span class="on-chain-val" style="color:var(--green)">~2.1 (Neutral)</span>
+        <span class="on-chain-desc">Below red zone (&gt;7); room to grow</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">NUPL Phase</span>
+        <span class="on-chain-val" style="color:var(--cyan)">Optimism–Belief</span>
+        <span class="on-chain-desc">Not euphoric; mid-cycle signature</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">SOPR</span>
+        <span class="on-chain-val" style="color:var(--green)">~1.01</span>
+        <span class="on-chain-desc">Slight profit; no euphoric distribution</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">LTH Supply %</span>
+        <span class="on-chain-val" style="color:var(--gold)">~74%</span>
+        <span class="on-chain-desc">Record illiquid supply; tight float</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Fear &amp; Greed</span>
+        <span class="on-chain-val" id="pat-fg" style="color:var(--red)">~31 (Fear)</span>
+        <span class="on-chain-desc">Historically constructive for longs</span>
+      </div>
+      <div class="on-chain-row">
+        <span class="on-chain-name">Pi Cycle Top</span>
+        <span class="on-chain-val" style="color:var(--green)">Not triggered</span>
+        <span class="on-chain-desc">No crossover at Oct 2025 ATH</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px">
+    <div class="pattern-card">
+      <div class="pattern-sub">Diminishing Returns Law</div>
+      <div class="pattern-title">Cycle Gains</div>
+      <div style="margin-top:12px">
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Cycle 1 (2012–2013)</span><span class="tick-up">+9,335%</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px"><div style="width:100%;height:100%;background:var(--green);border-radius:3px"></div></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Cycle 2 (2016–2017)</span><span class="tick-up">+2,944%</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px"><div style="width:31%;height:100%;background:var(--green);border-radius:3px"></div></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Cycle 3 (2020–2021)</span><span class="tick-up">+693%</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px"><div style="width:7%;height:100%;background:var(--gold);border-radius:3px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Cycle 4 (2024–2025)</span><span class="tick-up">+98%</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px"><div style="width:1%;height:100%;background:var(--gold2);border-radius:3px"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text3)">Each cycle: lower % gain as market cap grows. Pattern remains intact.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-sub">Top 10 Price Drivers (2026)</div>
+      <div class="pattern-title">Ranked by Impact</div>
+      <div id="drivers-list" style="margin-top:12px"></div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-sub">ATH Drawdown History</div>
+      <div class="pattern-title">Every Bear Market</div>
+      <div style="margin-top:12px">
+        <div class="on-chain-row"><span class="on-chain-name">2011 crash</span><span class="on-chain-val" style="color:var(--red)">-93%</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">2013 top (1st)</span><span class="on-chain-val" style="color:var(--red)">-81%</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">2014 crash (Mt.Gox)</span><span class="on-chain-val" style="color:var(--red)">-87%</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">2018 crash</span><span class="on-chain-val" style="color:var(--red)">-84%</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">2022 crash (FTX)</span><span class="on-chain-val" style="color:var(--red)">-77%</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">2025–2026 (current)</span><span class="on-chain-val" style="color:var(--gold)">~-37%</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:12px">Current correction is significantly shallower than prior cycles — ETF institutional floor effect.</div>
+    </div>
+  </div>
+
+  <!-- SATOSHI / MAJOR ACTOR RISK -->
+  <div class="grid-2">
+    <div class="pattern-card">
+      <div class="pattern-sub">Quantum Risk Assessment</div>
+      <div class="pattern-title">Timeline to Threat</div>
+      <div style="margin-top:12px;font-size:13px;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--gold)">Current state (May 2026):</strong> Google Willow has 105 physical qubits. Breaking secp256k1 requires ~1,200–1,450 logical qubits (~500K physical). Gap = 4+ orders of magnitude.<br><br>
+        <strong style="color:var(--gold)">Exposed supply:</strong> ~4.5M BTC in P2PK / reused P2PKH addresses (Deloitte). Includes Satoshi's ~1.1M BTC.<br><br>
+        <strong style="color:var(--gold)">Protection:</strong> BIP-360 (P2QRH/P2MR) merged <strong>Feb 12, 2026</strong>. Quantum-resistant address type in development.<br><br>
+        <strong style="color:var(--green)">Verdict:</strong> 10–20 year threat horizon. Bitcoin has time to transition.
+      </div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-sub">Institutional Concentration Risk</div>
+      <div class="pattern-title">Supply Custody Map</div>
+      <div style="margin-top:12px">
+        <div class="on-chain-row"><span class="on-chain-name">BlackRock IBIT</span><span class="on-chain-val" style="color:var(--gold)">~821K BTC</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">Strategy (MSTR)</span><span class="on-chain-val" style="color:var(--gold)">~819K BTC</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">US Govt (Strategic Reserve)</span><span class="on-chain-val" style="color:var(--cyan)">~328K BTC</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">Satoshi cluster</span><span class="on-chain-val" style="color:var(--text3)">~1.1M BTC (dormant)</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">All ETFs combined</span><span class="on-chain-val" style="color:var(--gold)">~1.25M BTC</span></div>
+        <div class="on-chain-row"><span class="on-chain-name">74% supply illiquid</span><span class="on-chain-val" style="color:var(--green)">~14.7M BTC</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████████████████ PAGE: GLOSSARY ████████████████ -->
+<div id="page-glossary" class="page">
+  <div class="sec-title">Bitcoin <span class="hl">Glossary</span></div>
+  <div class="sec-sub">Every term, concept and metric used in the Bitcoin world — from blockchain basics to advanced on-chain analysis</div>
+  <input id="gloss-search" placeholder="🔍  Search terms…" oninput="filterGlossary(this.value)">
+  <div class="glossary-alpha" id="gloss-alpha"></div>
+  <div id="gloss-content"></div>
+</div>
+
+<!-- ████████████████ PAGE: BLOG ████████████████ -->
+<div id="page-blog" class="page">
+  <div class="sec-title">AVIDAA <span class="hl">Bitcoin Blog</span></div>
+  <div class="sec-sub">Expert analysis, deep dives and research articles — updated with the AVIDAA intelligence layer</div>
+  <div class="grid-3" id="blog-grid"></div>
+</div>
+
+<!-- ████████████████ PAGE: TOOLS ████████████████ -->
+<div id="page-tools" class="page">
+  <div class="sec-title">Bitcoin <span class="hl">Tools</span> &amp; Resources</div>
+  <div class="sec-sub">Curated list of free, active, live Bitcoin tools — all links verified working May 2026</div>
+  <div class="grid-2" id="tools-grid"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+var currentPage = 'home';
+function go(name){
+  var pages = document.querySelectorAll('.page');
+  pages.forEach(function(p){p.classList.remove('active')});
+  var pg = document.getElementById('page-'+name);
+  if(pg){pg.classList.add('active');currentPage=name}
+  var btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(function(b,i){b.classList.remove('active')});
+  var idx = ['home','timeline','explorer','wallets','patterns','glossary','blog','tools'];
+  var bi = idx.indexOf(name);
+  if(bi>=0 && btns[bi]) btns[bi].classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='timeline') buildTimeline();
+  if(name==='wallets') buildWallets();
+  if(name==='glossary') buildGlossary();
+  if(name==='blog') buildBlog();
+  if(name==='tools') buildTools();
+  if(name==='patterns') buildPatterns();
+  if(name==='explorer') loadLatestBlock();
+}
+
+// ═══════════════════════════════════════════════════════
+// LIVE DATA — CoinGecko (client-side, free, no key)
+// ═══════════════════════════════════════════════════════
+var liveData = {};
+function fmtUSD(n){
+  if(n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  return '$'+n.toLocaleString();
+}
+function loadCoinGecko(){
+  fetch('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var md = d.market_data;
+      var price = md.current_price.usd;
+      var change24 = md.price_change_percentage_24h;
+      var mcap = md.market_cap.usd;
+      var vol = md.total_volume.usd;
+      var high = md.high_24h.usd;
+      var low = md.low_24h.usd;
+      var fdv = md.fully_diluted_valuation ? md.fully_diluted_valuation.usd : 0;
+      liveData = {price,change24,mcap,vol,high,low,fdv};
+      // Topbar
+      var priceEl = document.getElementById('btc-price');
+      if(priceEl){priceEl.textContent='$'+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});priceEl.classList.remove('pulse')}
+      var chgEl = document.getElementById('btc-change');
+      if(chgEl){chgEl.textContent=(change24>=0?'+':'')+change24.toFixed(2)+'%';chgEl.className='tick-val '+(change24>=0?'tick-up':'tick-dn')}
+      var mcapEl = document.getElementById('btc-mcap');
+      if(mcapEl) mcapEl.textContent = fmtUSD(mcap);
+      // Cards
+      var cp = document.getElementById('card-price');
+      if(cp) cp.textContent = '$'+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+      var cb = document.getElementById('card-change-badge');
+      if(cb){cb.textContent=(change24>=0?'▲ +':' ▼ ')+Math.abs(change24).toFixed(2)+'%';cb.className='badge '+(change24>=0?'badge-up':'badge-dn')}
+      var cu = document.getElementById('card-change-usd');
+      if(cu) cu.textContent='('+(change24>=0?'+':'')+fmtUSD(price*change24/100)+' 24h)';
+      var ch = document.getElementById('card-high');if(ch) ch.textContent='$'+high.toLocaleString(undefined,{maximumFractionDigits:0});
+      var cl = document.getElementById('card-low');if(cl) cl.textContent='$'+low.toLocaleString(undefined,{maximumFractionDigits:0});
+      var cm = document.getElementById('card-mcap');if(cm) cm.textContent=fmtUSD(mcap);
+      var cf = document.getElementById('card-fdv');if(cf) cf.textContent=fdv?fmtUSD(fdv):'—';
+      var cv = document.getElementById('card-vol');if(cv) cv.textContent=fmtUSD(vol);
+      // Marquee
+      var mv = document.getElementById('m-vol');if(mv) mv.textContent=fmtUSD(vol);
+      document.querySelectorAll('.m-vol-2').forEach(function(e){e.textContent=fmtUSD(vol)});
+    }).catch(function(){});
+}
+
+function loadDominance(){
+  fetch('https://api.coingecko.com/api/v3/global')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var dom = d.data.market_cap_percentage.btc;
+      var domEl = document.getElementById('btc-dom');
+      if(domEl) domEl.textContent=dom.toFixed(1)+'%';
+      var cd = document.getElementById('card-dom');
+      if(cd) cd.textContent=dom.toFixed(1)+'%';
+    }).catch(function(){});
+}
+
+function loadFearGreed(){
+  fetch('https://api.alternative.me/fng/?limit=1')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var val = parseInt(d.data[0].value);
+      var lbl = d.data[0].value_classification;
+      var fg = document.getElementById('fg-tick');
+      if(fg){fg.textContent=val+' '+lbl;fg.style.color=val<25?'var(--red)':val<50?'#ff9800':val<75?'var(--gold)':'var(--green)'}
+      var fn = document.getElementById('fg-number');
+      if(fn){fn.textContent=val;fn.style.color=val<25?'var(--red)':val<50?'#ff9800':val<75?'var(--gold)':'var(--green)'}
+      var fl = document.getElementById('fg-label');
+      if(fl){fl.textContent=lbl;fl.style.color=val<25?'var(--red)':val<50?'#ff9800':val<75?'var(--gold)':'var(--green)'}
+      var pf = document.getElementById('pat-fg');
+      if(pf){pf.textContent=val+' ('+lbl+')';pf.style.color=val<50?'var(--red)':'var(--green)'}
+      // Rotate gauge needle
+      var angle = -90 + (val/100)*180;
+      var needle = document.getElementById('gauge-needle');
+      if(needle) needle.setAttribute('transform','rotate('+angle+',90,85)');
+    }).catch(function(){});
+}
+
+function loadMempool(){
+  fetch('https://mempool.space/api/v1/blocks/tip/height')
+    .then(function(r){return r.json()})
+    .then(function(h){
+      var bh = document.getElementById('block-height');if(bh) bh.textContent='#'+h.toLocaleString();
+      var db = document.getElementById('dash-block');if(db) db.textContent='#'+h.toLocaleString();
+      var mb = document.getElementById('m-block');if(mb) mb.textContent='#'+h.toLocaleString();
+      document.querySelectorAll('.m-block-2').forEach(function(e){e.textContent='#'+h.toLocaleString()});
+    }).catch(function(){});
+  fetch('https://mempool.space/api/v1/fees/recommended')
+    .then(function(r){return r.json()})
+    .then(function(f){
+      var df = document.getElementById('dash-fee');if(df) df.textContent=f.fastestFee+' sat/vB';
+      var mf = document.getElementById('m-fee');if(mf) mf.textContent=f.fastestFee;
+      document.querySelectorAll('.m-fee-2').forEach(function(e){e.textContent=f.fastestFee});
+    }).catch(function(){});
+  fetch('https://mempool.space/api/v1/mining/hashrate/3m')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.currentHashrate){
+        var hr = (d.currentHashrate/1e18).toFixed(2)+' EH/s';
+        var mh = document.getElementById('m-hashrate');if(mh) mh.textContent=hr;
+        document.querySelectorAll('.m-hashrate-2').forEach(function(e){e.textContent=hr});
+        var dh = document.getElementById('dash-hashrate');if(dh) dh.textContent=hr;
+      }
+    }).catch(function(){});
+  fetch('https://mempool.space/api/v1/difficulty-adjustment')
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var dd = document.getElementById('dash-diff');
+      if(dd && d.nextDifficultyAdjustment) dd.textContent=(d.nextDifficultyAdjustment/1e12).toFixed(2)+'T';
+    }).catch(function(){});
+}
+
+// ═══════════════════════════════════════════════════════
+// HALVING COUNTDOWN
+// ═══════════════════════════════════════════════════════
+var halvingDate = new Date('2028-04-17T00:00:00Z');
+function updateCountdown(){
+  var now = new Date();
+  var diff = halvingDate - now;
+  if(diff<0){diff=0}
+  var d = Math.floor(diff/86400000);
+  var h = Math.floor((diff%86400000)/3600000);
+  var m = Math.floor((diff%3600000)/60000);
+  var s = Math.floor((diff%60000)/1000);
+  var cd = document.getElementById('cd-d');if(cd) cd.textContent=d;
+  var ch = document.getElementById('cd-h');if(ch) ch.textContent=String(h).padStart(2,'0');
+  var cm = document.getElementById('cd-m');if(cm) cm.textContent=String(m).padStart(2,'0');
+  var cs = document.getElementById('cd-s');if(cs) cs.textContent=String(s).padStart(2,'0');
+}
+
+// ═══════════════════════════════════════════════════════
+// BLOCKCHAIN EXPLORER
+// ═══════════════════════════════════════════════════════
+var explorerMode = 'auto';
+function setExplorerMode(m){
+  explorerMode = m;
+  document.querySelectorAll('.explorer-tab').forEach(function(t,i){
+    t.classList.remove('active');
+    if(['auto','address','tx','block'][i]===m) t.classList.add('active');
+  });
+}
+
+function exploreSearch(){
+  var q = document.getElementById('explorer-input').value.trim();
+  if(!q){return}
+  var res = document.getElementById('explorer-result');
+  res.innerHTML = '<p class="loading-dots" style="color:var(--text3);padding:20px;text-align:center">Searching blockchain</p>';
+  // Detect type
+  var type = explorerMode;
+  if(type==='auto'){
+    if(/^[0-9]+$/.test(q)) type='block';
+    else if(q.length===64) type='tx';
+    else type='address';
+  }
+  if(type==='address') searchAddress(q);
+  else if(type==='tx') searchTx(q);
+  else if(type==='block') searchBlock(q);
+}
+
+function searchAddress(addr){
+  var res = document.getElementById('explorer-result');
+  fetch('https://blockstream.info/api/address/'+addr)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var bal = ((d.chain_stats.funded_txo_sum - d.chain_stats.spent_txo_sum)/1e8).toFixed(8);
+      var btcUSD = (liveData.price||0)*parseFloat(bal);
+      res.innerHTML = '<div class="result-row"><span class="result-key">Address</span><span class="result-val mono">' + addr + '</span></div>'
+        + '<div class="result-row"><span class="result-key">Balance</span><span class="result-val"><strong style="color:var(--gold)">' + bal + ' BTC</strong> ≈ '+(liveData.price?fmtUSD(btcUSD):'—')+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Total Received</span><span class="result-val">' + (d.chain_stats.funded_txo_sum/1e8).toFixed(8)+' BTC</span></div>'
+        + '<div class="result-row"><span class="result-key">Total Sent</span><span class="result-val">' + (d.chain_stats.spent_txo_sum/1e8).toFixed(8)+' BTC</span></div>'
+        + '<div class="result-row"><span class="result-key">Transactions</span><span class="result-val">' + d.chain_stats.tx_count + '</span></div>'
+        + '<div class="result-row"><span class="result-key">Unconfirmed TXs</span><span class="result-val">' + d.mempool_stats.tx_count + '</span></div>'
+        + '<div class="result-row"><span class="result-key">Explorer Links</span><span class="result-val">'
+        + '<a href="https://mempool.space/address/'+addr+'" target="_blank">Mempool.space</a> · '
+        + '<a href="https://blockstream.info/address/'+addr+'" target="_blank">Blockstream</a> · '
+        + '<a href="https://www.blockchain.com/explorer/addresses/btc/'+addr+'" target="_blank">Blockchain.com</a>'
+        + '</span></div>';
+    }).catch(function(e){
+      res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'. Try on <a href="https://mempool.space/address/'+addr+'" target="_blank">Mempool.space</a></p>';
+    });
+}
+
+function searchTx(txid){
+  var res = document.getElementById('explorer-result');
+  fetch('https://blockstream.info/api/tx/'+txid)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var total = d.vout.reduce(function(s,o){return s+o.value},0)/1e8;
+      var fee = d.fee ? (d.fee/1e8).toFixed(8) : '—';
+      res.innerHTML = '<div class="result-row"><span class="result-key">Transaction</span><span class="result-val mono">' + txid.substring(0,40)+'...</span></div>'
+        + '<div class="result-row"><span class="result-key">Status</span><span class="result-val">'+(d.status.confirmed?'<span class="badge badge-up">✅ Confirmed — Block #'+d.status.block_height+'</span>':'<span class="badge badge-neutral">⏳ Unconfirmed</span>')+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Block Time</span><span class="result-val">'+(d.status.block_time?new Date(d.status.block_time*1000).toUTCString():'Pending')+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Size / vSize</span><span class="result-val">'+d.size+' bytes / '+d.vsize+' vbytes</span></div>'
+        + '<div class="result-row"><span class="result-key">Inputs / Outputs</span><span class="result-val">'+d.vin.length+' / '+d.vout.length+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Total Output</span><span class="result-val"><strong style="color:var(--gold)">'+total.toFixed(8)+' BTC</strong></span></div>'
+        + '<div class="result-row"><span class="result-key">Fee</span><span class="result-val">'+fee+' BTC · '+(d.fee&&d.vsize?(d.fee/d.vsize).toFixed(1):'')+' sat/vB</span></div>'
+        + '<div class="result-row"><span class="result-key">View Full</span><span class="result-val"><a href="https://mempool.space/tx/'+txid+'" target="_blank">Mempool.space</a> · <a href="https://blockstream.info/tx/'+txid+'" target="_blank">Blockstream</a></span></div>';
+    }).catch(function(e){
+      res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'. View on <a href="https://mempool.space/tx/'+txid+'" target="_blank">Mempool.space</a></p>';
+    });
+}
+
+function searchBlock(q){
+  var res = document.getElementById('explorer-result');
+  var url = isNaN(q) ? ('https://blockstream.info/api/block/'+q) : ('https://blockstream.info/api/block-height/'+q);
+  fetch(url).then(function(r){return r.json()}).then(function(hash){
+    var h = typeof hash==='string'?hash:q;
+    return fetch('https://blockstream.info/api/block/'+h).then(function(r){return r.json()}).then(function(d){
+      res.innerHTML = '<div class="result-row"><span class="result-key">Block Hash</span><span class="result-val mono">' + d.id.substring(0,40)+'...</span></div>'
+        + '<div class="result-row"><span class="result-key">Height</span><span class="result-val">#'+d.height.toLocaleString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Timestamp</span><span class="result-val">'+new Date(d.timestamp*1000).toUTCString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Transactions</span><span class="result-val">'+d.tx_count.toLocaleString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Size</span><span class="result-val">'+Math.round(d.size/1000)+' KB / Weight: '+d.weight.toLocaleString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Difficulty</span><span class="result-val">'+(d.difficulty/1e12).toFixed(2)+'T</span></div>'
+        + '<div class="result-row"><span class="result-key">Miner (nonce)</span><span class="result-val">'+d.nonce+'</span></div>'
+        + '<div class="result-row"><span class="result-key">View Full</span><span class="result-val"><a href="https://mempool.space/block/'+d.id+'" target="_blank">Mempool.space</a> · <a href="https://blockstream.info/block/'+d.id+'" target="_blank">Blockstream</a></span></div>';
+    });
+  }).catch(function(e){
+    res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'</p>';
+  });
+}
+
+function loadLatestBlock(){
+  var el = document.getElementById('latest-block-info');
+  if(!el) return;
+  fetch('https://mempool.space/api/v1/blocks/0')
+    .then(function(r){return r.json()})
+    .then(function(blocks){
+      var b = blocks[0];
+      el.innerHTML = '<div class="result-row"><span class="result-key">Height</span><span class="result-val">#'+b.height.toLocaleString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Time</span><span class="result-val">'+new Date(b.timestamp*1000).toLocaleTimeString()+' ('+new Date(b.timestamp*1000).toLocaleDateString()+')</span></div>'
+        + '<div class="result-row"><span class="result-key">Transactions</span><span class="result-val">'+b.tx_count.toLocaleString()+'</span></div>'
+        + '<div class="result-row"><span class="result-key">Size</span><span class="result-val">'+Math.round(b.size/1000)+' KB</span></div>'
+        + '<div class="result-row"><span class="result-key">Pool</span><span class="result-val">'+(b.extras&&b.extras.pool?b.extras.pool.name:'Unknown')+'</span></div>'
+        + '<a href="https://mempool.space/block/'+b.id+'" target="_blank" class="btn btn-outline" style="margin-top:12px;font-size:11px">View on Mempool.space</a>';
+    }).catch(function(){
+      el.innerHTML='<p style="color:var(--text3)">Loading… or <a href="https://mempool.space" target="_blank">open Mempool.space</a></p>';
+    });
+}
+
+document.getElementById('explorer-input').addEventListener('keydown',function(e){if(e.key==='Enter') exploreSearch()});
+
+// ═══════════════════════════════════════════════════════
+// WALLET BALANCE CHECKER
+// ═══════════════════════════════════════════════════════
+function checkWalletBalance(){
+  var addr = document.getElementById('wallet-check-input').value.trim();
+  var res = document.getElementById('wallet-check-result');
+  if(!addr){return}
+  res.style.display='block';
+  res.innerHTML='<p class="loading-dots" style="color:var(--text3)">Looking up balance</p>';
+  fetch('https://blockstream.info/api/address/'+addr)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var bal = ((d.chain_stats.funded_txo_sum - d.chain_stats.spent_txo_sum)/1e8);
+      var usd = liveData.price ? (bal * liveData.price) : 0;
+      res.innerHTML='<div class="card" style="padding:16px"><div class="result-row"><span class="result-key">Address</span><span class="result-val mono" style="font-size:11px">'+addr+'</span></div>'
+        +'<div class="result-row"><span class="result-key">Balance</span><span class="result-val" style="color:var(--gold);font-weight:700">'+bal.toFixed(8)+' BTC'+(usd?' ≈ '+fmtUSD(usd):'')+'</span></div>'
+        +'<div class="result-row"><span class="result-key">Transactions</span><span class="result-val">'+d.chain_stats.tx_count+'</span></div>'
+        +'<div style="margin-top:8px"><a href="https://mempool.space/address/'+addr+'" target="_blank" class="btn btn-outline" style="font-size:11px">View Full History</a></div></div>';
+    }).catch(function(){
+      res.innerHTML='<p style="color:var(--red)">Could not fetch. Try <a href="https://mempool.space/address/'+addr+'" target="_blank">Mempool.space</a></p>';
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// WALLETS PAGE DATA
+// ═══════════════════════════════════════════════════════
+var walletsData = [
+  {name:'Strategy (MicroStrategy)',addr:'',icon:'🏢',btc:'818,869',type:'Corporate Treasury',color:'#f7931a',tag:'Corporate',note:'Avg cost $75,540/BTC'},
+  {name:'BlackRock IBIT ETF',addr:'',icon:'🖤',btc:'821,512',type:'Spot ETF',color:'#00e5ff',tag:'ETF',note:'~66% US ETF market share'},
+  {name:'US Government (Strategic Reserve)',addr:'',icon:'🇺🇸',btc:'~328,000',type:'Government',color:'#4CAF50',tag:'Government',note:'Executive Order Mar 2025'},
+  {name:'Binance Cold Wallet',addr:'34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo',icon:'🟡',btc:'~248,000',type:'Exchange',color:'#F0B90B',tag:'Exchange',note:'Primary cold storage'},
+  {name:'Bitfinex',addr:'bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw57',icon:'🔴',btc:'~178,000',type:'Exchange',color:'#16C784',tag:'Exchange',note:''},
+  {name:'Satoshi Genesis Cluster',addr:'1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf6',icon:'₿',btc:'~1,100,000',type:'Genesis',color:'#f7931a',tag:'Dormant',note:'Genesis block · Never moved · ~1.1M BTC across ~22K addresses'},
+  {name:'Coinbase Custody',addr:'',icon:'🔵',btc:'~200,000',type:'Exchange',color:'#0052FF',tag:'Exchange',note:'Institutional custody'},
+  {name:'Grayscale GBTC',addr:'',icon:'⚫',btc:'~220,000',type:'Spot ETF',color:'#888',tag:'ETF',note:'Lost dominant position to IBIT'},
+  {name:'Bybit Exchange',addr:'',icon:'🟠',btc:'~85,000',type:'Exchange',color:'#F7931A',tag:'Exchange',note:'$1.5B hack Feb 2025 (Lazarus)'},
+  {name:'Fidelity FBTC ETF',addr:'',icon:'🟢',btc:'~195,000',type:'Spot ETF',color:'#00B14F',tag:'ETF',note:'Second-largest US Bitcoin ETF'},
+  {name:'OKX Exchange',addr:'',icon:'🟣',btc:'~70,000',type:'Exchange',color:'#8B5CF6',tag:'Exchange',note:'Verified reserves'},
+  {name:'Kraken Exchange',addr:'',icon:'🪸',btc:'~35,000',type:'Exchange',color:'#5741D9',tag:'Exchange',note:''},
+  {name:'Mt. Gox Trustee (Repayment)',addr:'1FazHMVjKgnMcMHCMDnWhKpXW72e45KrNa',icon:'💀',btc:'~30,000',type:'Historical',color:'#888',tag:'Repayment',note:'Ongoing creditor repayments since 2024'},
+  {name:'Block.one (EOS / Peter Thiel)',addr:'',icon:'🔶',btc:'~140,000',type:'Corporate',color:'#888',tag:'Corporate',note:''},
+  {name:'Marathon Digital (MARA)',addr:'',icon:'⛏️',btc:'~45,000',type:'Miner',color:'#ff9800',tag:'Miner',note:'Largest public Bitcoin miner'},
+];
+
+function buildWallets(){
+  var list = document.getElementById('wallets-list');
+  if(!list||list.dataset.built) return;
+  list.dataset.built='1';
+  var html='';
+  walletsData.forEach(function(w){
+    html+='<div class="wallet-row" onclick="'+(w.addr?'document.getElementById(\'explorer-input\').value=\''+w.addr+'\';go(\'explorer\');':'')+'">'+
+    '<div class="wallet-icon" style="background:'+w.color+'20;font-size:20px">'+w.icon+'</div>'+
+    '<div><div class="wallet-name">'+w.name+'</div><div class="wallet-addr">'+(w.addr?w.addr.substring(0,30)+'...':w.note||'Aggregate / institutional custody')+'</div></div>'+
+    '<div><div class="wallet-btc">'+w.btc+' BTC</div><div class="wallet-usd">'+(w.btc.replace(/[^0-9.]/g,'')&&liveData.price?fmtUSD(parseFloat(w.btc.replace(/[^0-9.]/g,''))*liveData.price):'—')+'</div></div>'+
+    '<div><span class="wallet-badge" style="background:'+w.color+'20;color:'+w.color+';border:1px solid '+w.color+'40">'+w.tag+'</span></div>'+
+    '</div>';
+  });
+  list.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════
+// TIMELINE DATA
+// ═══════════════════════════════════════════════════════
+var timelineData = [
+  {d:'Oct 2008',p:'$0',e:'Satoshi Nakamoto publishes Bitcoin whitepaper',tags:['genesis']},
+  {d:'Jan 3, 2009',p:'$0',e:'Genesis Block mined — "Chancellor on brink of second bailout for banks"',tags:['genesis','halving']},
+  {d:'Jan 12, 2009',p:'$0',e:'First BTC transaction: Satoshi → Hal Finney (block 170)',tags:['genesis']},
+  {d:'Oct 5, 2009',p:'$0.0008',e:'First exchange rate: NewLibertyStandard',tags:[]},
+  {d:'May 22, 2010',p:'$0.004',e:'Bitcoin Pizza Day — 10,000 BTC for 2 Papa John\'s pizzas',tags:['milestone']},
+  {d:'Jul 2010',p:'$0.08',e:'Mt. Gox exchange launches',tags:[]},
+  {d:'Feb 2011',p:'$1.00',e:'First parity with USD',tags:['bull','milestone']},
+  {d:'Jun 2011',p:'$31.91',e:'First bubble peak — Mt. Gox. +8,000% in 6 months',tags:['bull','ath']},
+  {d:'Nov 2011',p:'$2',e:'First major crash — 93% drawdown from $32',tags:['bear']},
+  {d:'Nov 28, 2012',p:'$12.35',e:'HALVING 1 — Block reward: 50→25 BTC at block 210,000',tags:['halving']},
+  {d:'Mar 2013',p:'$35',e:'Cyprus banking crisis — capital flight into BTC',tags:['bull']},
+  {d:'Apr 2013',p:'$266',e:'Mini peak then crashed to $50',tags:['bull','bear']},
+  {d:'Oct 2013',p:'$150',e:'Silk Road shut down — FBI seizes 144,000 BTC',tags:['event']},
+  {d:'Nov 29, 2013',p:'$1,163',e:'First $1,000 crossing — ATH 2013',tags:['bull','ath','milestone']},
+  {d:'Feb 2014',p:'$580',e:'Mt. Gox collapse — 850,000 BTC lost',tags:['bear','event']},
+  {d:'Jan 2015',p:'$152',e:'Cycle bottom — 87% drawdown from $1,163',tags:['bear']},
+  {d:'Jul 9, 2016',p:'$650',e:'HALVING 2 — Block reward: 25→12.5 BTC at block 420,000',tags:['halving']},
+  {d:'Aug 2017',p:'$3,200',e:'Bitcoin Cash (BCH) hard fork',tags:['event']},
+  {d:'Sep 2017',p:'$4,500',e:'China bans crypto exchanges — temporary crash',tags:['event','bear']},
+  {d:'Dec 17, 2017',p:'$19,783',e:'ATH 2017 — retail ICO mania peak. F&G: 95-100',tags:['bull','ath']},
+  {d:'Dec 2018',p:'$3,122',e:'Cycle bottom — 84% drawdown from $19,783',tags:['bear']},
+  {d:'Jun 2019',p:'$13,800',e:'Pre-halving rally peak',tags:['bull']},
+  {d:'Mar 12, 2020',p:'$3,782',e:'COVID Black Thursday crash — -50% in 24 hours',tags:['bear','event']},
+  {d:'May 11, 2020',p:'$8,700',e:'HALVING 3 — Block reward: 12.5→6.25 BTC at block 630,000',tags:['halving']},
+  {d:'Aug 2020',p:'$11,000',e:'MicroStrategy buys first BTC — corporate treasury narrative begins',tags:['bull','institutional']},
+  {d:'Oct 2020',p:'$11,000',e:'PayPal enables Bitcoin buying for US users',tags:['bull','institutional']},
+  {d:'Dec 16, 2020',p:'$20,000',e:'Breaks 2017 ATH for first time — $20K milestone',tags:['bull','milestone']},
+  {d:'Feb 2021',p:'$58,000',e:'Tesla buys $1.5B in BTC. Elon effect.',tags:['bull','institutional']},
+  {d:'Apr 14, 2021',p:'$64,895',e:'Coinbase IPO (COIN) on Nasdaq — mid-cycle ATH',tags:['bull','ath']},
+  {d:'May 2021',p:'$29,000',e:'China mining ban — 53% crash from $65K peak',tags:['bear','event']},
+  {d:'Nov 10, 2021',p:'$69,044',e:'ATH 2021 — institutional cycle peak. F&G: 97',tags:['bull','ath']},
+  {d:'May 2022',p:'$29,000',e:'Terra/LUNA collapse — $60B wipeout, BTC drops -35% in 1 week',tags:['bear','event']},
+  {d:'Jun 2022',p:'$17,593',e:'Celsius, 3AC bankrupt — forced liquidations',tags:['bear','event']},
+  {d:'Nov 8, 2022',p:'$20,000',e:'FTX collapses — SBF arrested. Worst credibility crisis in crypto',tags:['bear','event']},
+  {d:'Nov 21, 2022',p:'$15,476',e:'Cycle bottom — 77% drawdown from $69K ATH',tags:['bear']},
+  {d:'Jan 10, 2024',p:'$46,000',e:'SEC approves 11 Spot Bitcoin ETFs — BlackRock IBIT, Fidelity FBTC lead',tags:['bull','institutional','milestone']},
+  {d:'Mar 2024',p:'$73,750',e:'Pre-halving ATH — unprecedented before halving',tags:['bull','ath']},
+  {d:'Apr 19, 2024',p:'$63,800',e:'HALVING 4 — Block reward: 6.25→3.125 BTC at block 840,000',tags:['halving']},
+  {d:'Nov 2024',p:'$89,000',e:'Trump wins US election — crypto-friendly policy expectations surge',tags:['bull','institutional']},
+  {d:'Dec 17, 2024',p:'$108,135',e:'New ATH — ETF demand + MicroStrategy accumulation',tags:['bull','ath']},
+  {d:'Mar 6, 2025',p:'$90,000',e:'Trump Executive Order: US Strategic Bitcoin Reserve established',tags:['bull','institutional']},
+  {d:'Jul 14, 2025',p:'$120,781',e:'New ATH (some sources)',tags:['bull','ath']},
+  {d:'Oct 6, 2025',p:'$126,200',e:'CURRENT ALL-TIME HIGH — $126,200. F&G: ~80',tags:['ath','bull']},
+  {d:'Nov 2025',p:'$90,000',e:'Correction begins — ETF outflows $3.48B in Nov alone',tags:['bear']},
+  {d:'Feb 2026',p:'~$65,000',e:'Cycle low (~37% from ATH) — MSTR mNAV touches 1.00×',tags:['bear']},
+  {d:'Feb 12, 2026',p:'$82,000',e:'BIP-360 (P2QRH quantum-resistant addresses) merged to BIPs GitHub',tags:['event']},
+  {d:'Apr-May 2026',p:'~$80,000',e:'Recovery — ETF inflows $1.97B (Apr), CLARITY Act advancing in Senate',tags:['bull']},
+];
+
+function buildTimeline(){
+  var tbody = document.getElementById('timeline-body');
+  if(!tbody||tbody.dataset.built) return;
+  tbody.dataset.built='1';
+  var html='';
+  var lastEra='';
+  var eras={'2009-2010':'Era 0 — Pre-Market','2011':'Era 1 — First Bubble','2012-2013':'Era 2 — Cycle 1','2014-2015':'Era 3 — Bear I','2016-2017':'Era 4 — ICO Mania','2018-2019':'Era 5 — Bear II','2020-2021':'Era 6 — Institutional','2022-2023':'Era 7 — Bear III','2024-2025':'Era 8 — ETF Cycle','2026':'Era 9 — Present'};
+  var eraMap={'2009':'2009-2010','2010':'2009-2010','2011':'2011','2012':'2012-2013','2013':'2012-2013','2014':'2014-2015','2015':'2014-2015','2016':'2016-2017','2017':'2016-2017','2018':'2018-2019','2019':'2018-2019','2020':'2020-2021','2021':'2020-2021','2022':'2022-2023','2023':'2022-2023','2024':'2024-2025','2025':'2024-2025','2026':'2026'};
+  timelineData.forEach(function(row){
+    var yr = row.d.match(/\d{4}/);yr=yr?yr[0]:'';
+    var era = yr?eraMap[yr]||'':'';
+    if(era&&era!==lastEra){lastEra=era;html+='<tr><td colspan="4" class="era">'+eras[era]+'</td></tr>'}
+    var tags = row.tags.map(function(t){return '<span class="event-tag '+t+'">'+t+'</span>'}).join('');
+    html+='<tr><td style="white-space:nowrap;color:var(--text3)">'+row.d+'</td>'
+      +'<td style="white-space:nowrap;font-family:var(--fontb);font-weight:700;color:var(--gold)">'+row.p+'</td>'
+      +'<td>'+row.e+'</td>'
+      +'<td><div class="event-tags">'+tags+'</div></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// GLOSSARY DATA
+// ═══════════════════════════════════════════════════════
+var glossaryData = [
+  {t:'Address',d:'A Bitcoin address is a string of alphanumeric characters that represents a destination for Bitcoin transactions. Derived from a public key via SHA-256 and RIPEMD-160 hashing. Formats: Legacy (1…), P2SH (3…), SegWit (bc1q…), Taproot (bc1p…). Think of it as an email address for money — share it publicly to receive BTC.',tags:['Technical','Wallet']},
+  {t:'ATH (All-Time High)',d:'The highest price Bitcoin has ever reached at any point in its history. Bitcoin\'s current ATH is $126,200 (October 6, 2025). ATH is a key sentiment indicator — markets often price in "will we break ATH?" as a narrative driver.',tags:['Price','Market']},
+  {t:'ASIC',d:'Application-Specific Integrated Circuit. Hardware designed solely for Bitcoin mining (SHA-256 hashing). ASICs are 100,000× more efficient than CPUs for mining. Major manufacturers: Bitmain (Antminer), MicroBT (WhatsMiner), Canaan. ASIC production creates centralization pressure in mining.',tags:['Mining','Technical']},
+  {t:'AVWAP (Anchored VWAP)',d:'Volume-Weighted Average Price anchored to a specific starting date. Bitcoin analysts use AVWAP from halving dates or ATH to identify institutional cost basis zones and key support/resistance levels.',tags:['Technical Analysis','Trading']},
+  {t:'BIP (Bitcoin Improvement Proposal)',d:'Formal documents proposing changes to the Bitcoin protocol. Anyone can submit a BIP. Process: Draft → Proposed → Final (or Rejected). Key BIPs: BIP-39 (mnemonic phrases), BIP-84 (SegWit), BIP-341/342 (Taproot), BIP-360 (post-quantum). BIPs require consensus from miners, nodes and developers to activate.',tags:['Protocol','Development']},
+  {t:'Blockchain',d:'The append-only distributed ledger on which all Bitcoin transactions are recorded. Each block contains a SHA-256 hash of the previous block, creating an unbreakable chain. Immutability is guaranteed by the Proof of Work difficulty of rewriting history. As of May 2026: ~949,000 blocks since January 2009.',tags:['Technical','Core']},
+  {t:'Block Reward',d:'The amount of new BTC miners receive for successfully mining a block. Started at 50 BTC in 2009; currently 3.125 BTC after the April 2024 halving. Will drop to 1.5625 BTC at the ~2028 halving. Block reward = subsidy + transaction fees. When all 21M BTC are mined (~2140), miners will rely entirely on fees.',tags:['Mining','Economics']},
+  {t:'Coinbase Transaction',d:'The first transaction in every Bitcoin block, created by the miner. It awards the miner the block subsidy + all transaction fees. It has no inputs (no UTXO consumed) and is the only way new BTC enters circulation. Satoshi embedded the famous "Chancellor on brink of second bailout for banks" in the genesis coinbase.',tags:['Mining','Technical']},
+  {t:'Cold Wallet / Cold Storage',d:'Bitcoin storage where private keys are held offline — never connected to the internet. Methods: hardware wallets (Ledger, Trezor), paper wallets, air-gapped computers. Cold storage is the gold standard for security. Exchange hacks only steal from "hot" (online) wallets — self-custody with cold storage protects against this.',tags:['Security','Wallet']},
+  {t:'Custody',d:'Who controls the private keys to Bitcoin. "Not your keys, not your coins." Self-custody = you hold keys. Custodial = exchange/ETF holds keys. BlackRock IBIT: custodied by Coinbase Prime (~$245B institutional AUM). MicroStrategy: self-custodies its ~819K BTC.',tags:['Security','Legal']},
+  {t:'DCA (Dollar-Cost Averaging)',d:'An investment strategy of buying a fixed dollar amount of Bitcoin at regular intervals regardless of price. Historically the best retail strategy for accumulating BTC over full cycles. Avoids the emotional trap of trying to time the market perfectly.',tags:['Strategy','Investment']},
+  {t:'Difficulty',d:'A measure of how hard it is to mine a Bitcoin block. Adjusts every 2,016 blocks (~2 weeks) so that blocks are produced approximately every 10 minutes. If hashrate increases, difficulty increases. Current difficulty: ~136 trillion (May 2026). This is the Proof of Work security mechanism.',tags:['Mining','Technical']},
+  {t:'ECDSA',d:'Elliptic Curve Digital Signature Algorithm — the cryptographic scheme Bitcoin uses to prove ownership of UTXOs. Based on the secp256k1 curve. A private key (256-bit random number) generates a public key; transactions are signed with the private key and verified with the public key. Vulnerable to Shor\'s algorithm on a sufficiently powerful quantum computer.',tags:['Cryptography','Technical']},
+  {t:'Fear & Greed Index',d:'Daily sentiment metric for Bitcoin/crypto markets by Alternative.me. Scale 0-100: 0=Extreme Fear, 100=Extreme Greed. Components: volatility (25%), market momentum/volume (25%), social media (15%), surveys (15%), BTC dominance (10%), Google Trends (10%). Contrarian signal: extreme fear is historically bullish, extreme greed is bearish.',tags:['Sentiment','Market']},
+  {t:'FOMO (Fear Of Missing Out)',d:'The psychological driver of late-cycle buying. Retail investors see Bitcoin at ATH, assume the trend continues, and buy near the top. FOMO is the most reliable indicator of market tops. When your taxi driver, aunt, and barber are all asking "should I buy Bitcoin?" — the top is near.',tags:['Sentiment','Psychology']},
+  {t:'FUD (Fear, Uncertainty, Doubt)',d:'Negative sentiment spread to cause selling panic. Bitcoin has survived 400+ "Bitcoin is dead" articles (99bitcoins.com tracks them). Historical FUD: China mining bans, SEC lawsuits, exchange hacks, Mt. Gox. The pattern: FUD creates capitulation bottoms that become the best long-term buy zones.',tags:['Sentiment','Market']},
+  {t:'Genesis Block',d:'Block #0 of the Bitcoin blockchain, mined by Satoshi Nakamoto on January 3, 2009. It is hardcoded into every Bitcoin client — it can never be reorganized away. Contains the famous Times headline message. The 50 BTC coinbase reward in the genesis block can never be spent due to a quirk in the original code.',tags:['History','Core']},
+  {t:'Halving',d:'The event that cuts the Bitcoin block reward in half, occurring every 210,000 blocks (~4 years). There have been 4 halvings: Nov 2012 (50→25), Jul 2016 (25→12.5), May 2020 (12.5→6.25), Apr 2024 (6.25→3.125). The halving reduces new supply issuance, historically triggering bull markets 12–18 months later. Next halving: ~April 2028 at block 1,050,000.',tags:['Economics','Core','Cycles']},
+  {t:'Hash Rate',d:'The total computational power of the Bitcoin network, measured in hashes per second. Higher hash rate = more secure network. As of May 2026: ~1.020 ZH/s (1,020 exahashes per second). This is the highest in Bitcoin\'s history, representing a massive increase in security compared to early years.',tags:['Mining','Security']},
+  {t:'HODL',d:'Hold On for Dear Life — crypto culture term for not selling Bitcoin regardless of price movements. Originated from a drunken 2013 Bitcointalk post by "GameKyuubi" ("I AM HODLING"). Philosophy: most traders underperform simple long-term holding due to emotional decision-making.',tags:['Culture','Strategy']},
+  {t:'Lightning Network',d:'Bitcoin\'s primary Layer 2 scaling solution. Uses payment channels to enable fast, cheap BTC transactions without recording every transaction on-chain. Two parties lock BTC in a multi-sig UTXO and transact off-chain; only the opening and closing are on-chain. As of May 2026: ~5,600 BTC public capacity, ~75,000 channels.',tags:['Layer2','Technical','Scaling']},
+  {t:'LTH / STH (Long-Term / Short-Term Holder)',d:'On-chain classification: LTH = coins unmoved for ≥155 days. STH = coins moved within <155 days. In May 2026: ~74% of circulating BTC is illiquid (not moved in ≥2 years). LTH accumulation during bear markets and distribution during bull markets is one of the most reliable on-chain cycle signals.',tags:['On-Chain','Analytics']},
+  {t:'Mempool',d:'The memory pool — every full node\'s holding area for unconfirmed transactions waiting to be included in a block. Miners select transactions by fee rate (sat/vByte). When the mempool is congested (high demand), fees spike. Mempool.space provides the best free real-time visualization.',tags:['Technical','Transactions']},
+  {t:'Merkle Tree',d:'A data structure used in Bitcoin blocks to efficiently summarize all transactions. Each transaction is hashed; pairs of hashes are hashed together, up to a single Merkle root stored in the block header. Allows Simplified Payment Verification (SPV) — lightweight clients can verify transactions without downloading the full blockchain.',tags:['Technical','Cryptography']},
+  {t:'MSTR (MicroStrategy/Strategy)',d:'Publicly traded company (Nasdaq: MSTR) that holds Bitcoin as its primary treasury asset. Founded by Michael Saylor. Holds 818,869 BTC (May 2026) at avg cost $75,540/coin. Funded via convertible bonds, preferred stock (STRC), and common equity. The "infinite money glitch": issue equity at premium → buy BTC → BTC rises → stock rises → repeat.',tags:['Institutional','Corporate']},
+  {t:'MVRV Z-Score',d:'Market Value to Realized Value Z-Score. Formula: (Market Cap − Realized Cap) / StdDev(Market Cap − Realized Cap). Red zone (>7): historically within weeks of a cycle top. Green zone (<0): historically strong buy signal. Created by Murad Mahmudov and David Puell. May 2026: ~2.1 (neutral — room to grow).',tags:['On-Chain','Analytics']},
+  {t:'NUPL (Net Unrealized Profit/Loss)',d:'Formula: (Market Cap − Realized Cap) / Market Cap. Measures overall profitability of all coins. Phases: Capitulation (<0) → Hope/Fear (0–0.25) → Optimism (0.25–0.5) → Belief (0.5–0.75) → Euphoria (>0.75). May 2026: Optimism–Belief range.',tags:['On-Chain','Analytics']},
+  {t:'On-Chain Analytics',d:'The study of Bitcoin blockchain data to derive market insights. Key metrics: MVRV, NUPL, SOPR, exchange flows, coin age, LTH/STH behavior, realized cap. Tools: Glassnode (premium), CryptoQuant, Checkonchain.com (free), Lookintobitcoin.com (free). Provides raw data that sentiment-based analysis cannot.',tags:['Analytics','Metrics']},
+  {t:'Pi Cycle Top',d:'Technical indicator using 111-day MA and 350-day MA × 2. When the 111DMA crosses above the 350DMA×2, it has historically marked Bitcoin cycle tops within 3 days. Called the 2019 low and 2021 top accurately. Did NOT trigger at the October 2025 ATH of $126,200 — suggesting either market maturation or cycle is not yet complete.',tags:['Technical Analysis','Cycles']},
+  {t:'PoW (Proof of Work)',d:'Bitcoin\'s consensus mechanism. Miners compete to solve a computationally expensive SHA-256 puzzle. The winner adds the next block and receives the block reward. PoW makes it economically irrational to attack the network — an attacker would need >50% of global hashrate and would destroy the value of their investment. As of May 2026: ~1 ZH/s total hashrate.',tags:['Consensus','Technical','Security']},
+  {t:'Private Key',d:'A 256-bit random number that proves ownership of Bitcoin. If you know the private key, you can spend the BTC. If you lose it, the BTC is gone forever. NEVER share your private key. Stored in wallets as seed phrases (12 or 24 words via BIP-39). ~3–4 million BTC are believed permanently lost to forgotten private keys.',tags:['Cryptography','Security','Wallet']},
+  {t:'Realized Cap / Realized Price',d:'Realized Cap = sum of all BTC valued at the price when they last moved (not current price). Realized Price = Realized Cap / Supply. More stable than market cap; represents the aggregate cost basis of all BTC holders. When market price < realized price = buyers are underwater = historically strong buy zone. May 2026 estimated realized price: ~$45K.',tags:['On-Chain','Analytics']},
+  {t:'Satoshi',d:'The smallest unit of Bitcoin: 0.00000001 BTC = 1 satoshi (sat). Named after Bitcoin\'s pseudonymous creator, Satoshi Nakamoto. With Bitcoin at $80K, 1 satoshi ≈ $0.0008. Lightning Network transactions are denominated in millisatoshis (msat). "Stacking sats" = accumulating small amounts of Bitcoin over time.',tags:['Units','Core']},
+  {t:'SegWit (Segregated Witness)',d:'BIP-141 — upgrade activated August 2017. Separates signature (witness) data from transaction data, reducing transaction size and enabling the Lightning Network. Introduced bech32 addresses (bc1q…). Fixed transaction malleability (a bug that was preventing LN implementation). Increased block capacity from 1MB to ~4MB equivalent.',tags:['Protocol','Technical','Upgrade']},
+  {t:'SHA-256',d:'Secure Hash Algorithm 256-bit — the cryptographic function at Bitcoin\'s core. Used in: Proof of Work (mining), address derivation, Merkle trees, block chaining. SHA-256 is quantum-safe against Grover\'s algorithm (effective security drops to 128-bit, still safe). NOT vulnerable to Shor\'s algorithm (unlike ECDSA).',tags:['Cryptography','Technical']},
+  {t:'SOPR (Spent Output Profit Ratio)',d:'Measures whether BTC being spent is in profit or loss. Formula: value at time of spend / value at acquisition. SOPR > 1: profit. SOPR = 1: breakeven. SOPR < 1: loss. In bull markets, SOPR dips to 1.0 are buy signals (weak hands capitulated). May 2026: ~1.01 — modest profit, no euphoric distribution.',tags:['On-Chain','Analytics']},
+  {t:'Taproot',d:'Bitcoin upgrade activated November 14, 2021 (block 709,632). Three BIPs: BIP-340 (Schnorr signatures), BIP-341 (MAST/P2TR), BIP-342 (Tapscript). Key benefits: multi-sig = single-sig on-chain privacy, smaller signatures via Schnorr aggregation, foundation for Lightning improvements and future smart contract extensions. Addresses begin bc1p…',tags:['Protocol','Upgrade','Technical']},
+  {t:'UTXO (Unspent Transaction Output)',d:'The fundamental accounting unit of Bitcoin. Every transaction consumes UTXOs as inputs and creates new UTXOs as outputs. Your "balance" is the sum of all UTXOs with keys you control. The UTXO set must be maintained by all full nodes. Unlike Ethereum\'s account model, UTXOs enable parallel validation and better privacy.',tags:['Technical','Core']},
+  {t:'Whale',d:'A Bitcoin holder with a large enough position to significantly impact market prices. Generally defined as holding ≥1,000 BTC. In 2026, institutional whales (BlackRock IBIT ~821K BTC, Strategy ~819K BTC) dwarf individual whales. Whale movements are tracked via on-chain analytics for trading signals.',tags:['Market','Participants']},
+];
+
+function buildGlossary(){
+  var content = document.getElementById('gloss-content');
+  if(!content || content.dataset.built) return;
+  content.dataset.built='1';
+  // Build alpha buttons
+  var alphaEl = document.getElementById('gloss-alpha');
+  var letters = [...new Set(glossaryData.map(function(g){return g.t[0]}))].sort();
+  alphaEl.innerHTML = letters.map(function(l){return '<button class="alpha-btn" onclick="scrollToLetter(\''+l+'\')" id="alpha-'+l+'">'+l+'</button>'}).join('');
+  // Build content grouped by letter
+  var grouped = {};
+  glossaryData.sort(function(a,b){return a.t.localeCompare(b.t)}).forEach(function(g){
+    var l = g.t[0];
+    if(!grouped[l]) grouped[l]=[];
+    grouped[l].push(g);
+  });
+  var html='';
+  Object.keys(grouped).sort().forEach(function(l){
+    html+='<div class="gloss-group" id="gloss-'+l+'"><div class="gloss-letter">'+l+'</div>';
+    grouped[l].forEach(function(g){
+      html+='<div class="gloss-item" data-term="'+g.t.toLowerCase()+'" data-def="'+g.d.toLowerCase()+'">'
+        +'<div class="gloss-term">'+g.t+'</div>'
+        +(g.tags?'<div style="margin-bottom:8px">'+g.tags.map(function(t){return'<span class="gloss-tag">'+t+'</span>'}).join('')+'</div>':'')
+        +'<div class="gloss-def">'+g.d+'</div></div>';
+    });
+    html+='</div>';
+  });
+  content.innerHTML=html;
+}
+
+function scrollToLetter(l){
+  var el = document.getElementById('gloss-'+l);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.alpha-btn').forEach(function(b){b.classList.remove('active')});
+  var ab = document.getElementById('alpha-'+l);
+  if(ab) ab.classList.add('active');
+}
+
+function filterGlossary(q){
+  q = q.toLowerCase();
+  document.querySelectorAll('.gloss-item').forEach(function(el){
+    var match = !q || el.dataset.term.includes(q) || el.dataset.def.includes(q);
+    el.style.display = match?'':'none';
+  });
+  document.querySelectorAll('.gloss-group').forEach(function(el){
+    var visible = el.querySelectorAll('.gloss-item[style=""],.gloss-item:not([style])');
+    var anyVisible = Array.from(el.querySelectorAll('.gloss-item')).some(function(i){return i.style.display!=='none'});
+    el.style.display = anyVisible?'':'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BLOG DATA
+// ═══════════════════════════════════════════════════════
+var blogData = [
+  {icon:'🎯',cat:'Cycle Analysis',title:'Where Are We in the Bitcoin Cycle? May 2026 Assessment',date:'May 17, 2026',read:'12 min',excerpt:'Bitcoin is down ~37% from its October 2025 ATH of $126,200. On-chain metrics say this is a mid-cycle correction, not a bear market. Here is the full evidence.',link:'https://checkonchain.com'},
+  {icon:'⚛️',cat:'Technology',title:'BIP-360: The Quantum Resistance Upgrade That Could Save Bitcoin',date:'Feb 14, 2026',read:'8 min',excerpt:'BIP-360 (P2QRH) was merged on February 12, 2026. Here is what post-quantum Bitcoin addresses look like, what they protect, and why ~4.5M BTC remains at quantum risk.',link:'https://bip360.org'},
+  {icon:'🏦',cat:'Institutional',title:'BlackRock IBIT — Savior or Centralizer? The Full Analysis',date:'May 1, 2026',read:'15 min',excerpt:'BlackRock now holds 821,512 BTC — 3.9% of all supply — in a single custodial product held at Coinbase Prime. We examine the concentration risk, the Fink evolution from "money laundering" to "major believer," and what it means.',link:'https://bitbo.io/treasuries/blackrock-ibit/'},
+  {icon:'🕵️',cat:'Investigation',title:'Epstein, MIT and Bitcoin Core: A Full Investigation',date:'Mar 2026',read:'20 min',excerpt:'$525,000 from Epstein flowed through MIT Media Lab into the Digital Currency Initiative, which paid Gavin Andresen, Wladimir van der Laan and Cory Fields. The full documented timeline.',link:'https://qz.com/1704325/revisiting-mits-digital-currency-initiative-after-joi-ito-epstein'},
+  {icon:'🎭',cat:'Mystery',title:'Finding Satoshi: The Finney + Sassaman Theory',date:'Apr 2026',read:'10 min',excerpt:'A new 2026 documentary makes the strongest case yet: Hal Finney (code) and Len Sassaman (whitepaper) created Bitcoin together as "Satoshi." Fran Finney: "I think he did help build it."',link:'https://www.theblock.co/post/398423/finding-satoshi-documentary-makes-case-hal-finney-len-sassaman-bitcoins-co-creators'},
+  {icon:'📉',cat:'Market',title:'Why Bitcoin Fell from $126K: The Complete Post-Mortem',date:'Feb 2026',read:'18 min',excerpt:'Seven factors drove the post-ATH correction: $6.18B ETF outflows, hawkish Fed, Silk Road BTC overhang, leverage flush, Strategy mNAV collapse, macro correlation, and Standard Chartered cutting targets.',link:'https://coindesk.com'},
+  {icon:'💼',cat:'Corporate',title:'Michael Saylor\'s Strategy: The "Infinite Money Glitch" Explained',date:'May 2026',read:'14 min',excerpt:'Strategy broke its "never sell" rule on May 5, 2026. Q1 net loss $12.54B. $1.5B annual preferred dividends. MSTR now trades at 1.16× mNAV. Is the flywheel still spinning?',link:'https://www.cnbc.com/2026/05/05/strategy-breaks-from-never-sell-bitcoin-approach.html'},
+  {icon:'⚡',cat:'Technology',title:'Lightning Network 2026: The State of Bitcoin\'s Layer 2',date:'Apr 2026',read:'9 min',excerpt:'5,600+ BTC public capacity (all-time high), ~75K channels, Taproot Assets v0.7, Tether leading $8M round in Speed. Lightning is quietly becoming the payments layer Bitcoin always promised.',link:'https://bitcoinmagazine.com'},
+  {icon:'🌍',cat:'Macro',title:'Bitcoin as Inflation Hedge: Does the Data Support It in 2026?',date:'May 2026',read:'11 min',excerpt:'S&P correlation hit 0.74 in early March 2026. Bitcoin moved like a risk asset during the rate-hike fears. But its fixed 21M supply thesis remains intact. The debate continues.',link:'https://coindesk.com'},
+];
+
+function buildBlog(){
+  var grid = document.getElementById('blog-grid');
+  if(!grid||grid.dataset.built) return;
+  grid.dataset.built='1';
+  grid.innerHTML = blogData.map(function(b){
+    return '<a href="'+b.link+'" target="_blank" style="text-decoration:none">'
+      +'<div class="blog-card">'
+      +'<div class="blog-img">'+b.icon+'</div>'
+      +'<div class="blog-body">'
+      +'<div class="blog-cat">'+b.cat+'</div>'
+      +'<div class="blog-title">'+b.title+'</div>'
+      +'<div class="blog-excerpt">'+b.excerpt+'</div>'
+      +'<div class="blog-meta"><span>📅 '+b.date+'</span><span>⏱ '+b.read+'</span></div>'
+      +'</div></div></a>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// TOOLS DATA
+// ═══════════════════════════════════════════════════════
+var toolsData = {
+  'Live Price & Market Data':[
+    {icon:'📊',name:'CoinMarketCap',desc:'Prices, volume, rankings, community sentiment',url:'https://coinmarketcap.com/currencies/bitcoin/',tag:'Live'},
+    {icon:'🦎',name:'CoinGecko',desc:'Market data, on-chain info, DeFi tracker',url:'https://www.coingecko.com/en/coins/bitcoin',tag:'Live'},
+    {icon:'📈',name:'TradingView',desc:'Best free charting platform for BTC/USD',url:'https://www.tradingview.com/chart/?symbol=BITSTAMP%3ABTCUSD',tag:'Free'},
+    {icon:'💹',name:'Messari',desc:'Research, metrics, protocol data',url:'https://messari.io/asset/bitcoin',tag:'Free'},
+  ],
+  'Blockchain Explorers':[
+    {icon:'🌊',name:'Mempool.space',desc:'Real-time mempool, fees, mining pools',url:'https://mempool.space',tag:'Free · Live'},
+    {icon:'⚡',name:'Blockstream Explorer',desc:'Full node API, raw transaction data',url:'https://blockstream.info',tag:'Free · API'},
+    {icon:'🔗',name:'Blockchain.com Explorer',desc:'Charts, rich list, pools',url:'https://www.blockchain.com/explorer',tag:'Free'},
+    {icon:'🔎',name:'BTCScan',desc:'Clean explorer, wallet stats',url:'https://btcscan.org',tag:'Free'},
+    {icon:'🔑',name:'OXT.me',desc:'Privacy-focused chain analytics',url:'https://oxt.me',tag:'Free'},
+  ],
+  'On-Chain Analytics':[
+    {icon:'📉',name:'Lookintobitcoin.com',desc:'Free cycle charts: Rainbow, Pi Cycle, MVRV, Halving',url:'https://www.lookintobitcoin.com',tag:'Free'},
+    {icon:'🔗',name:'Checkonchain.com',desc:'Professional free on-chain suite: MVRV, SOPR, NUPL',url:'https://charts.checkonchain.com',tag:'Free'},
+    {icon:'⚡',name:'Bitbo.io',desc:'BTC dashboard, treasuries, halving countdown',url:'https://bitbo.io',tag:'Free'},
+    {icon:'🏦',name:'Bitcoin Treasuries',desc:'All corporate, ETF and government BTC holdings',url:'https://bitcointreasuries.net',tag:'Free'},
+    {icon:'💎',name:'Glassnode Studio',desc:'Most comprehensive on-chain (limited free tier)',url:'https://studio.glassnode.com',tag:'Freemium'},
+    {icon:'📊',name:'CryptoQuant',desc:'Exchange flows, miner data',url:'https://cryptoquant.com',tag:'Freemium'},
+  ],
+  'Sentiment & News':[
+    {icon:'😱',name:'Fear & Greed Index',desc:'Daily crypto sentiment 0-100 by Alternative.me',url:'https://alternative.me/crypto/fear-and-greed-index/',tag:'Free · Live'},
+    {icon:'📰',name:'CoinDesk',desc:'Leading Bitcoin & crypto news',url:'https://www.coindesk.com/bitcoin',tag:'Free'},
+    {icon:'📰',name:'Bitcoin Magazine',desc:'Bitcoin-focused news and analysis',url:'https://bitcoinmagazine.com',tag:'Free'},
+    {icon:'📊',name:'Santiment',desc:'Social sentiment and on-chain analytics',url:'https://santiment.net',tag:'Freemium'},
+    {icon:'🐦',name:'WhaleStat',desc:'Whale wallet tracking and alerts',url:'https://whalestats.com',tag:'Free'},
+  ],
+  'Mining & Network':[
+    {icon:'⛏️',name:'Hashrate Index',desc:'Mining analytics, hashprice, pool stats',url:'https://hashrateindex.com',tag:'Free'},
+    {icon:'🌊',name:'Mempool Mining',desc:'Pool distribution, hashrate, difficulty',url:'https://mempool.space/mining',tag:'Free · Live'},
+    {icon:'📦',name:'Bitcoin Visuals',desc:'Network stats, node counts, mempool history',url:'https://bitcoinvisuals.com',tag:'Free'},
+  ],
+  'Education & Research':[
+    {icon:'📚',name:'Bitcoin Wiki',desc:'Technical documentation for everything Bitcoin',url:'https://en.bitcoin.it/wiki/Main_Page',tag:'Reference'},
+    {icon:'💡',name:'Investopedia Bitcoin',desc:'Plain-English explanations',url:'https://www.investopedia.com/terms/b/bitcoin.asp',tag:'Free'},
+    {icon:'🎓',name:'River Financial Learn',desc:'High-quality Bitcoin education articles',url:'https://river.com/learn',tag:'Free'},
+    {icon:'🔬',name:'Satoshi Whitepaper',desc:'The original Bitcoin whitepaper (Oct 2008)',url:'https://bitcoin.org/bitcoin.pdf',tag:'PDF'},
+    {icon:'📊',name:'BIP Repository',desc:'All Bitcoin Improvement Proposals on GitHub',url:'https://github.com/bitcoin/bips',tag:'GitHub'},
+  ],
+  'ETF & Institutional':[
+    {icon:'🖤',name:'BlackRock IBIT',desc:'iShares Bitcoin Trust ETF product page',url:'https://www.ishares.com/us/products/333011/ishares-bitcoin-trust-etf',tag:'ETF'},
+    {icon:'🟢',name:'Fidelity FBTC',desc:'Fidelity Wise Origin Bitcoin Fund',url:'https://www.fidelity.com/etfs/bitcoin',tag:'ETF'},
+    {icon:'📊',name:'SoSoValue ETF Flows',desc:'Daily ETF flow tracker for all 11 US spot ETFs',url:'https://sosovalue.com/us/etf/us-bitcoin-spot-etf',tag:'Free · Live'},
+    {icon:'🏢',name:'Strategy BTC Tracker',desc:'MicroStrategy/Strategy real-time BTC holdings',url:'https://bitcoinquant.co/company/MSTR',tag:'Free'},
+  ],
+};
+
+function buildTools(){
+  var grid = document.getElementById('tools-grid');
+  if(!grid||grid.dataset.built) return;
+  grid.dataset.built='1';
+  var html='<div>';
+  Object.keys(toolsData).forEach(function(cat){
+    html+='<div class="tools-section"><div class="tools-section-title">'+cat+'</div>';
+    toolsData[cat].forEach(function(t){
+      html+='<a href="'+t.url+'" target="_blank" class="tool-link">'
+        +'<div class="tool-icon">'+t.icon+'</div>'
+        +'<div><div class="tool-name">'+t.name+'</div><div class="tool-desc">'+t.desc+'</div></div>'
+        +'<span class="tool-tag">'+t.tag+'</span>'
+        +'</a>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  grid.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════
+// PATTERNS PAGE
+// ═══════════════════════════════════════════════════════
+var driversData = [
+  {rank:1,name:'Spot ETF Flows',impact:'Very High',note:'Nov 2025 -$3.48B → $90K. Apr 2026 +$2B → $80K'},
+  {rank:2,name:'Fed Monetary Policy',impact:'Very High',note:'Rate holds → headwinds; cuts → tailwinds'},
+  {rank:3,name:'Corp Treasury Flows',impact:'High',note:'Strategy alone: 90K BTC/quarter at peak'},
+  {rank:4,name:'US Gov Policy',impact:'High',note:'Strategic Reserve EO, CLARITY Act, SAB121'},
+  {rank:5,name:'Halving Supply Shock',impact:'High',note:'Post-halving ATH: 100% historically'},
+  {rank:6,name:'Tether (USDT) Issuance',impact:'Medium-High',note:'Stablecoin growth leads BTC 2-4 weeks'},
+  {rank:7,name:'DXY (Dollar Index)',impact:'Medium',note:'Inverse correlation — strong USD = BTC down'},
+  {rank:8,name:'Leverage Liquidations',impact:'Medium',note:'OI >40% drop Oct-Feb = $30B+ unwound'},
+  {rank:9,name:'Regulatory News',impact:'Medium',note:'Binary: CLARITY Act = bullish; ban = bearish'},
+  {rank:10,name:'Miner Selling Pressure',impact:'Low-Medium',note:'Hashprice $39/PH/s → miners near breakeven'},
+];
+
+function buildPatterns(){
+  var dl = document.getElementById('drivers-list');
+  if(!dl||dl.dataset.built) return;
+  dl.dataset.built='1';
+  dl.innerHTML = driversData.map(function(d){
+    var colors = {'Very High':'var(--red)','High':'var(--gold)','Medium-High':'var(--gold2)','Medium':'var(--cyan)','Low-Medium':'var(--text2)'};
+    return '<div class="on-chain-row"><span style="color:var(--text3);min-width:20px">'+d.rank+'.</span>'
+      +'<span class="on-chain-name" style="flex:1">'+d.name+'</span>'
+      +'<span style="color:'+colors[d.impact]+';font-size:10px;font-weight:700;white-space:nowrap">'+d.impact+'</span>'
+      +'</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT & INTERVALS
+// ═══════════════════════════════════════════════════════
+function initAll(){
+  loadCoinGecko();
+  loadDominance();
+  loadFearGreed();
+  loadMempool();
+  updateCountdown();
+  setInterval(updateCountdown,1000);
+  setInterval(function(){loadCoinGecko();loadMempool();},30000);
+  setInterval(function(){loadDominance();loadFearGreed();},120000);
+}
+
+document.addEventListener('DOMContentLoaded', initAll);
+
+// ═══════════════════════════════════════════════════════
+// KEYBOARD SHORTCUT: Enter in explorer
+// ═══════════════════════════════════════════════════════
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter' && document.activeElement.id==='explorer-input') exploreSearch();
+});
+</script>
+<!-- FOOTER -->
+<div style="border-top:1px solid var(--border);padding:16px;text-align:center;margin-top:40px">
+  <span style="color:var(--text3);font-size:11px;letter-spacing:0.5px">AVIDAA PROJECTS &nbsp;·&nbsp;</span>
+  <a href="https://avidaa1.github.io/hub/" target="_blank" style="color:var(--text3);font-size:11px;text-decoration:none;margin:0 10px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text3)'">⬡ AVIDAA HUB</a>
+  <span style="color:var(--border2)">|</span>
+  <a href="https://avidaa1.github.io/metaverse/" target="_blank" style="color:var(--text3);font-size:11px;text-decoration:none;margin:0 10px" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--text3)'">◈ METAVERSE</a>
+  <span style="color:var(--border2)">|</span>
+  <a href="https://avidaa1.github.io/bitcoin/" target="_blank" style="color:var(--text3);font-size:11px;text-decoration:none;margin:0 10px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text3)'">₿ BITCOIN</a>
+  <span style="color:var(--text3);font-size:11px">&nbsp;·&nbsp; AVIDAA * IO</span>
+</div>
+</body>
+</html>
