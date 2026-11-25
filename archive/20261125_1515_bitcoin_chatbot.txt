@@ -1,0 +1,6 @@
+Archived (removed from the live page) by the chatbot audit 20261125_1515.
+Original file: index.html
+
+/* ===== replaced: history hook ===== */
+  if(name==='hodlers') buildHodlersHistory();
+

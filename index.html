@@ -38,7 +38,7 @@
   script-src 'unsafe-inline' https://www.googletagmanager.com;
   style-src 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
-  connect-src 'self' https://api.coingecko.com https://api.alternative.me https://mempool.space https://blockstream.info https://api.anthropic.com https://www.google-analytics.com https://bitnodes.io https://api.binance.com;
+  connect-src 'self' https://api.coingecko.com https://api.alternative.me https://mempool.space https://blockstream.info https://www.google-analytics.com https://bitnodes.io https://api.binance.com;
   frame-ancestors 'none';
   img-src 'self' data: blob:;
 ">
@@ -269,47 +269,18 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
   .nav-btn svg{width:13px;height:13px}
 }
 /* ── CANONICAL AVIDAA CHATBOT MODULE — self-scoped ── */
-#chatbot{--cb-cyan:#00e5ff;--cb-purple:#a855f7;--cb-green:#26e07a;--cb-fb:'Syne',system-ui,sans-serif;--cb-fd:'Space Mono',monospace;}
-#chatbot{position:fixed;bottom:48px;right:18px;z-index:9000;width:min(420px,calc(100vw - 24px));font-family:var(--cb-fb);}
-#chat-toggle{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--cb-purple),var(--cb-cyan));border:2px solid rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 24px rgba(168,85,247,.45),0 0 48px rgba(0,229,255,.15);margin-left:auto;-webkit-appearance:none;appearance:none;transition:transform .2s,box-shadow .2s;animation:cb-chatpulse 3s ease-in-out infinite;color:#fff;}
-#chat-toggle:hover{transform:scale(1.08);}
 @keyframes cb-chatpulse{0%,100%{box-shadow:0 0 24px rgba(168,85,247,.45),0 0 48px rgba(0,229,255,.15);}50%{box-shadow:0 0 34px rgba(168,85,247,.7),0 0 64px rgba(0,229,255,.3);}}
 @keyframes cb-rainbow{to{background-position:200% center;}}
 @keyframes cb-livepulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-#chat-box{background:rgba(6,8,16,.97);border:1px solid rgba(0,229,255,.12);backdrop-filter:blur(20px);display:none;flex-direction:column;margin-bottom:10px;overflow:hidden;border-radius:6px;box-shadow:0 0 40px rgba(0,0,0,.8);}
-#chat-box.open{display:flex;}
 #quest-bar{height:3px;background:rgba(0,229,255,.08);position:relative;overflow:hidden;transition:opacity .3s;opacity:0;}
 #quest-bar.active{opacity:1;}
 #quest-fill{height:100%;width:0%;transition:width .8s ease,background .8s ease;background:var(--cb-cyan);}
 #quest-label{font-family:var(--cb-fd);font-size:11px;letter-spacing:3px;color:rgba(0,229,255,.35);padding:4px 16px 0;display:none;}
 #quest-label.active{display:block;}
-#chat-head{padding:12px 16px;border-bottom:1px solid rgba(0,229,255,.08);display:flex;justify-content:space-between;align-items:center;background:rgba(0,229,255,.03);}
 .ch-title{font-family:var(--cb-fd);font-size:11px;letter-spacing:4px;color:var(--cb-cyan);}
 .ch-status{font-size:11px;letter-spacing:2px;color:var(--cb-green);display:flex;align-items:center;gap:5px;}
-.ch-dot{width:5px;height:5px;border-radius:50%;background:var(--cb-green);animation:cb-livepulse 1.5s ease-in-out infinite;}
 .ch-close{color:rgba(255,255,255,.4);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;}
-#chat-msgs{height:240px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(0,229,255,.15) transparent;}
-.cmsg{font-size:12.5px;letter-spacing:.3px;line-height:1.55;padding:9px 13px;max-width:88%;position:relative;white-space:pre-wrap;}
-.cmsg.ai{background:rgba(0,229,255,.05);border-left:2px solid var(--cb-cyan);color:#c8d8f0;align-self:flex-start;border-radius:0 4px 4px 0;}
-.cmsg.ai::before{content:'AVIDAA';font-family:var(--cb-fd);font-size:11px;letter-spacing:2px;color:rgba(0,229,255,.4);display:block;margin-bottom:4px;}
-.cmsg.user{background:rgba(168,85,247,.07);border-right:2px solid var(--cb-purple);color:#c8d8f0;align-self:flex-end;text-align:right;border-radius:4px 0 0 4px;}
-.typing-indicator{display:flex;gap:4px;padding:10px 14px;align-self:flex-start;}
-.typing-indicator span{width:5px;height:5px;background:var(--cb-cyan);border-radius:50%;opacity:.4;animation:cb-typedot .8s ease-in-out infinite;}
-.typing-indicator span:nth-child(2){animation-delay:.15s;}
-.typing-indicator span:nth-child(3){animation-delay:.3s;}
 @keyframes cb-typedot{0%,100%{opacity:.2;transform:translateY(0);}50%{opacity:1;transform:translateY(-3px);}}
-#chat-suggestions{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px;border-top:1px solid rgba(0,229,255,.05);}
-.chat-sugg{font-size:11px;letter-spacing:.5px;padding:3px 10px;border:1px solid rgba(0,229,255,.15);color:rgba(0,229,255,.5);cursor:pointer;background:rgba(0,229,255,.03);transition:all .2s;-webkit-appearance:none;appearance:none;}
-.chat-sugg:hover{border-color:var(--cb-cyan);color:var(--cb-cyan);background:rgba(0,229,255,.06);box-shadow:0 0 10px rgba(0,229,255,.2);transform:translateY(-1px);}
-#chat-input-row{display:flex;border-top:1px solid rgba(0,229,255,.07);}
-#chat-input{flex:1;background:transparent;border:none;outline:none;color:#c8d8f0;font-family:var(--cb-fb);font-size:13px;padding:11px 14px;letter-spacing:.3px;-webkit-appearance:none;appearance:none;}
-#chat-input::placeholder{color:rgba(200,216,240,.3);}
-#chat-send{background:transparent;border:none;border-left:1px solid rgba(0,229,255,.07);color:var(--cb-cyan);padding:0 16px;cursor:pointer;font-size:15px;-webkit-appearance:none;appearance:none;transition:color .2s;}
-#chat-send:hover{color:#fff;}
-#rabbit-avatar{display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px rgba(0,229,255,.4));}
-#pulse-ring{position:absolute;bottom:-6px;right:-6px;width:58px;height:58px;border-radius:50%;pointer-events:none;z-index:-1;}
-@media (max-width:600px){#chatbot{bottom:14px;right:10px;}#chat-msgs{height:50vh;}}
-@media (prefers-reduced-motion:reduce){#chat-toggle{animation:none;}.ch-dot{animation:none;}}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G8M1YZQ8WF"></script>
@@ -645,24 +616,6 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
     </div>
   </div>
 
-  <!-- AI CONSENSUS READER -->
-  <div class="card" id="ai-consensus-card" style="margin-bottom:20px;border-color:rgba(0,229,255,0.25)">
-    <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-robot"/></svg> AI Consensus Reader</div>
-    <p style="color:var(--text2);font-size:12px;line-height:1.7;margin-bottom:14px">
-      Cross-checks every live number on this page (price, MVRV, NUPL, sentiment, ETF flows, hashrate) against the multiple independently-sourced figures compiled in AVIDAA's research, and returns a single confidence-weighted consensus reading — flagging where sources disagree instead of hiding it.
-    </p>
-    <div id="ai-key-row" style="display:flex;gap:8px;margin-bottom:12px">
-      <input id="ai-key-input" type="password" placeholder="Paste your Anthropic API key (stored only in your browser)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:12px;outline:none">
-      <button class="btn btn-outline" onclick="saveAiKey()">Save Key</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
-      <button class="btn btn-gold" onclick="runAiConsensus()" id="ai-run-btn"><svg class="ico" width="13" height="13"><use href="#icon-target"/></svg> Run Consensus Analysis</button>
-      <button class="btn btn-outline" onclick="forgetAiKey()" style="font-size:11px">Forget Key</button>
-      <span id="ai-status" style="font-size:11px;color:var(--text3)"></span>
-    </div>
-    <div id="ai-consensus-result" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;line-height:1.8;color:var(--text2)"></div>
-    <div style="font-size:10px;color:var(--text3);margin-top:10px">Key never leaves your browser — sent directly to api.anthropic.com, never stored on AVIDAA servers. Model: claude-sonnet-4-6.</div>
-  </div>
 </div>
 
 <!-- ████████████████ PAGE: TIMELINE ████████████████ -->
@@ -700,10 +653,6 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
     <p style="color:var(--text3);text-align:center;padding:20px">Enter a Bitcoin address, transaction ID or block number above to search the blockchain.</p>
   </div>
 
-  <div id="explorer-ai-row" style="display:none;margin-top:12px">
-    <button class="btn btn-outline" onclick="analyzeExplorerResult()"><svg class="ico" width="14" height="14"><use href="#icon-robot"/></svg> Analyze with AI</button>
-  </div>
-  <div id="explorer-ai-result" style="display:none;margin-top:10px;background:var(--bg3);border:1px solid rgba(0,229,255,0.25);border-radius:10px;padding:16px;font-size:13px;line-height:1.7;color:var(--text2)"></div>
 
   <hr class="separator">
 
@@ -833,7 +782,7 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
   <div class="card" style="margin-bottom:20px;border-color:rgba(247,147,26,0.3)">
     <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-target"/></svg> BTC Fit Matcher</div>
     <p style="color:var(--text2);font-size:12px;line-height:1.7;margin-bottom:16px">
-      Click through 3 quick choices. An offline weighted-scoring engine computes your fit instantly — no typing, no API key, no question sent anywhere.
+      Click through 3 quick choices. An offline weighted-scoring engine computes your fit instantly — no typing, no account, no question sent anywhere.
     </p>
     <div style="margin-bottom:14px">
       <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">1. Time Horizon</div>
@@ -862,25 +811,6 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
     <div id="fit-matcher-result" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px"></div>
   </div>
 
-  <div class="sec-title" style="font-size:20px;margin-top:32px">BTC <span class="hl">Credibility Score</span></div>
-  <div class="sec-sub">A repeatable, timestamped credibility test for HODLers — run it any time, every result is logged automatically below so you can track how Bitcoin's credibility is trending over time.</div>
-
-  <div class="card" style="margin-bottom:20px;border-color:rgba(0,229,255,0.25)">
-    <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-gauge"/></svg> Run Credibility Test</div>
-    <p style="color:var(--text2);font-size:12px;line-height:1.7;margin-bottom:14px">
-      Scores Bitcoin across 7 dimensions (1–10 each) using the live data on this page plus AVIDAA's compiled research: how clearly BTC is currently interpreted/understood, how secure it is (protocol + custody + quantum), sentiment level, fundamental value vs price, how much the world currently affects BTC, how much BTC affects the world, and real daily-use/adoption level. Uses your saved Anthropic key — same one as the other AI tools on this page.
-    </p>
-    <button class="btn btn-gold" onclick="runCredibilityTest()" id="cred-run-btn"><svg class="ico" width="13" height="13"><use href="#icon-target"/></svg> Run Credibility Test</button>
-    <span id="cred-status" style="font-size:11px;color:var(--text3);margin-left:10px"></span>
-    <div id="cred-result" style="display:none;margin-top:16px"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-calendar"/></svg> Credibility History (auto-logged, newest first)</div>
-    <p style="color:var(--text3);font-size:11px;margin-bottom:14px">Stored in this browser only (localStorage) — this is a personal running log, not a shared global database. Clear it any time.</p>
-    <div id="cred-history"><p style="color:var(--text3);text-align:center;padding:16px;font-size:12px">No credibility tests run yet on this browser.</p></div>
-    <button class="btn btn-outline" onclick="clearCredibilityHistory()" style="margin-top:12px;font-size:11px">Clear History</button>
-  </div>
 </div>
 
 <!-- ████████████████ PAGE: PATTERNS ████████████████ -->
@@ -1481,14 +1411,6 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
   <div class="sec-title">Bitcoin <span class="hl">Glossary</span></div>
   <div class="sec-sub">Every term, concept and metric used in the Bitcoin world — from blockchain basics to advanced on-chain analysis</div>
 
-  <div class="card" style="margin-bottom:20px;border-color:rgba(0,229,255,0.25)">
-    <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-robot"/></svg> Ask AI About Any Term</div>
-    <div style="display:flex;gap:8px">
-      <input id="gloss-ai-input" placeholder="e.g. what is a UTXO, or explain replace-by-fee…" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:12px;outline:none" onkeydown="if(event.key==='Enter')askGlossaryAi()">
-      <button class="btn btn-gold" onclick="askGlossaryAi()">Ask</button>
-    </div>
-    <div id="gloss-ai-result" style="display:none;margin-top:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text2)"></div>
-  </div>
 
   <input id="gloss-search" placeholder="Search terms…" oninput="filterGlossary(this.value)">
   <div class="glossary-alpha" id="gloss-alpha"></div>
@@ -1500,12 +1422,6 @@ a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
   <div class="sec-title">AVIDAA <span class="hl">Bitcoin Blog</span></div>
   <div class="sec-sub">Expert analysis, deep dives and research articles — updated with the AVIDAA intelligence layer</div>
 
-  <div class="card" style="margin-bottom:24px;border-color:rgba(247,147,26,0.3)">
-    <div class="card-header"><svg class="ico" width="16" height="16"><use href="#icon-robot"/></svg> AI Daily Market Brief</div>
-    <p style="color:var(--text2);font-size:12px;margin-bottom:12px">Generates a fresh, dated mini-article from the live numbers currently on this page — not a static post.</p>
-    <button class="btn btn-gold" onclick="generateAiBrief()" id="ai-brief-btn"><svg class="ico" width="13" height="13"><use href="#icon-edit"/></svg> Generate Today's Brief</button>
-    <div id="ai-brief-result" style="display:none;margin-top:14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;line-height:1.7;color:var(--text2)"></div>
-  </div>
 
   <div class="grid-3" id="blog-grid"></div>
 </div>
@@ -1543,7 +1459,6 @@ function go(name){
   window.scrollTo(0,0);
   if(name==='timeline') buildTimeline();
   if(name==='wallets') buildWallets();
-  if(name==='hodlers') buildHodlersHistory();
   if(name==='glossary') buildGlossary();
   if(name==='blog') buildBlog();
   if(name==='tools') buildTools();
@@ -1557,12 +1472,6 @@ function go(name){
 // ═══════════════════════════════════════════════════════
 var liveData = {};
 const AI_FEATURES = [
-  'Offline AVIDAA chatbot (two-tier encrypted rabbit hole)',
-  'AI Consensus Reader (on-chain metric reconciliation)',
-  'AI Explorer Analyst (on-chain data interpretation)',
-  'AI Glossary Assistant (plain-English term lookup)',
-  'AI Daily Market Brief generator',
-  'BTC Credibility Score engine (7-dimension timestamped tracking)',
   'Automated AI Signal Feed (offline pattern detection, no interaction required)',
   'BTC Fit Matcher (offline weighted-scoring engine, click-based)',
   'BTC Neural Brain (live 3D transaction network visualization)',
@@ -2244,9 +2153,6 @@ function exploreSearch(){
   if(!q){return}
   var res = document.getElementById('explorer-result');
   res.innerHTML = '<p class="loading-dots" style="color:var(--text3);padding:20px;text-align:center">Searching blockchain</p>';
-  document.getElementById('explorer-ai-row').style.display = 'none';
-  document.getElementById('explorer-ai-result').style.display = 'none';
-  lastExplorerQuery = q; lastExplorerData = '';
   // Detect type
   var type = explorerMode;
   if(type==='auto'){
@@ -2278,7 +2184,6 @@ function searchAddress(addr){
         + '<a href="https://www.blockchain.com/explorer/addresses/btc/'+addr+'" target="_blank">Blockchain.com</a>'
         + '</span></div>';
       lastExplorerData = 'Address: '+addr+' | Balance: '+bal+' BTC | Total received: '+(d.chain_stats.funded_txo_sum/1e8).toFixed(8)+' BTC | Total sent: '+(d.chain_stats.spent_txo_sum/1e8).toFixed(8)+' BTC | Tx count: '+d.chain_stats.tx_count+' | Unconfirmed: '+d.mempool_stats.tx_count;
-      document.getElementById('explorer-ai-row').style.display = 'block';
     }).catch(function(e){
       res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'. Try on <a href="https://mempool.space/address/'+addr+'" target="_blank">Mempool.space</a></p>';
     });
@@ -2300,7 +2205,6 @@ function searchTx(txid){
         + '<div class="result-row"><span class="result-key">Fee</span><span class="result-val">'+fee+' BTC · '+(d.fee&&d.vsize?(d.fee/d.vsize).toFixed(1):'')+' sat/vB</span></div>'
         + '<div class="result-row"><span class="result-key">View Full</span><span class="result-val"><a href="https://mempool.space/tx/'+txid+'" target="_blank">Mempool.space</a> · <a href="https://blockstream.info/tx/'+txid+'" target="_blank">Blockstream</a></span></div>';
       lastExplorerData = 'Transaction: '+txid+' | Status: '+(d.status.confirmed?'Confirmed at block '+d.status.block_height:'Unconfirmed')+' | Size: '+d.size+' bytes | Inputs: '+d.vin.length+' | Outputs: '+d.vout.length+' | Total output: '+total.toFixed(8)+' BTC | Fee: '+fee+' BTC';
-      document.getElementById('explorer-ai-row').style.display = 'block';
     }).catch(function(e){
       res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'. View on <a href="https://mempool.space/tx/'+txid+'" target="_blank">Mempool.space</a></p>';
     });
@@ -2321,7 +2225,6 @@ function searchBlock(q){
         + '<div class="result-row"><span class="result-key">Miner (nonce)</span><span class="result-val">'+d.nonce+'</span></div>'
         + '<div class="result-row"><span class="result-key">View Full</span><span class="result-val"><a href="https://mempool.space/block/'+d.id+'" target="_blank">Mempool.space</a> · <a href="https://blockstream.info/block/'+d.id+'" target="_blank">Blockstream</a></span></div>';
       lastExplorerData = 'Block: #'+d.height+' | Hash: '+d.id+' | Timestamp: '+new Date(d.timestamp*1000).toUTCString()+' | Tx count: '+d.tx_count+' | Size: '+Math.round(d.size/1000)+' KB | Difficulty: '+(d.difficulty/1e12).toFixed(2)+'T';
-      document.getElementById('explorer-ai-row').style.display = 'block';
     });
   }).catch(function(e){
     res.innerHTML='<p style="color:var(--red);padding:20px">Error: '+e.message+'</p>';
@@ -2767,187 +2670,7 @@ function buildPatterns(){
 }
 
 
-// ═══════════════════════════════════════════════════════
-// SHARED AI CORE (visitor-supplied Anthropic key, browser-side, no proxy)
-// ═══════════════════════════════════════════════════════
-function saveAiKey(){
-  var k = document.getElementById('ai-key-input').value.trim();
-  if(!k){return}
-  localStorage.setItem('avidaa_anthropic_key', k);
-  document.getElementById('ai-key-input').value = '';
-  document.getElementById('ai-key-input').placeholder = 'Key saved in this browser';
-  document.getElementById('ai-status').textContent = 'Key saved locally — now available on every AI tool on this page.';
-  document.getElementById('ai-status').style.color = 'var(--green)';
-}
-function forgetAiKey(){
-  localStorage.removeItem('avidaa_anthropic_key');
-  document.getElementById('ai-key-input').placeholder = 'Paste your Anthropic API key (stored only in your browser)';
-  document.getElementById('ai-status').textContent = 'Key removed from this browser.';
-  document.getElementById('ai-status').style.color = 'var(--text3)';
-}
-function hasAiKey(){ return !!localStorage.getItem('avidaa_anthropic_key') }
 
-// Core reusable call — every AI feature on the page routes through this
-function callClaude(prompt, maxTokens){
-  var key = localStorage.getItem('avidaa_anthropic_key');
-  if(!key){ return Promise.reject(new Error('NO_KEY')) }
-  return fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: maxTokens || 700,
-      messages: [{role:'user', content: prompt}]
-    })
-  })
-  .then(function(r){ return r.json() })
-  .then(function(data){
-    if(data.error){ throw new Error(data.error.message || 'API error') }
-    return (data.content || []).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('\n');
-  });
-}
-function renderAiText(text){
-  return text.split('\n\n').map(function(p){return '<p style="margin-bottom:10px">'+p+'</p>'}).join('');
-}
-function noKeyPrompt(el){
-  el.style.display = 'block';
-  el.innerHTML = '<p style="color:var(--gold)">Paste and save an Anthropic API key in the AI Consensus Reader panel on the Dashboard first — it then powers every AI tool on this page.</p>';
-}
-
-// ═══════════════════════════════════════════════════════
-// TOOL 1 — AI CONSENSUS READER (Dashboard)
-// ═══════════════════════════════════════════════════════
-function gatherLiveSnapshot(){
-  var g = function(id){var el=document.getElementById(id); return el ? el.textContent : '—'};
-  return {
-    price: g('card-price'), change24h: g('card-change-usd'), marketCap: g('card-mcap'), dominance: g('card-dom'),
-    fearGreed: g('fg-number') + ' (' + g('fg-label') + ')', hashrate: g('dash-hashrate'), blockHeight: g('dash-block'), fee: g('dash-fee'),
-    ath: '$128,198 (Oct 6, 2025)',
-    mvrvZScore: '0.41 (AhaSignals) vs 0.77 (MacroMicro) — fair value, sources disagree on exact magnitude',
-    nupl: '0.28 (Hope/Fear band)', sopr: '~1.01', lthSupply: '~74% illiquid',
-    hashRibbons: 'Recovery cross — exited miner capitulation', puellMultiple: 'Green zone',
-    sma200: '$81,194 (TipRanks) vs $82,455 (Glassnode) — sources disagree slightly',
-    etfFlows: '6-day outflow streak, -$1.55B (May 14-22, 2026, Farside/Cointelegraph); 13-day $4.4B outflow streak reported separately (Jun 2026) — different windows, same directional signal',
-    strategyHoldings: '843,775 BTC (Jul 26, 2026 Q2 filing), avg cost $75,482/BTC',
-    blackrockIbit: '~730,000 BTC (Jul 2026) — down from 769,180 BTC reported Feb 2026',
-    usReserve: '~328,372 BTC (Strategic Reserve, EO 14233, Mar 2025)',
-    miningPoolConcentration: 'Foundry USA ~31-34% + AntPool ~18% = >51% combined; Nakamoto coefficient 3',
-    quantumThreat: 'No cryptographically-relevant quantum computer exists; ~1,200-2,330 logical qubits needed vs ~100 today',
-    hormuzToll: 'US Treasury/OFAC sanctioned HormuzSafe + Persian Gulf Marine Insurance, Jul 29, 2026, EO 13902'
-  };
-}
-
-// ═══════════════════════════════════════════════════════
-// BTC CREDIBILITY SCORE ENGINE (HODLers tab — repeatable, timestamped)
-// ═══════════════════════════════════════════════════════
-var CRED_HISTORY_KEY = 'avidaa_btc_credibility_history';
-var CRED_DIMENSIONS = [
-  {key:'INTERPRETATION', label:'Interpretation / Clarity', desc:'How clearly BTC is currently understood/interpreted by media, analysts, on-chain readers'},
-  {key:'SECURITY',       label:'Security Level',            desc:'Protocol integrity, custody risk, quantum exposure, mining centralization, wallet-hacking landscape'},
-  {key:'SENTIMENT',      label:'Sentiment Level',            desc:'Fear & Greed, social sentiment, institutional tone, HODLer conviction'},
-  {key:'VALUE',          label:'Value Score',                desc:'Fundamental on-chain value (MVRV, realized price, S2F) vs current market price'},
-  {key:'WORLD_TO_BTC',   label:'World → BTC Effect',         desc:'How much macro/geopolitical events (Fed policy, sanctions, Hormuz, wars) are currently driving BTC'},
-  {key:'BTC_TO_WORLD',   label:'BTC → World Effect',         desc:'How much real-world influence BTC currently has (sanctions evasion, reserves, remittances, treasuries)'},
-  {key:'DAILY_USE',      label:'Daily Use / Adoption',       desc:'Actual daily transactional use, Lightning volume, remittances, merchant adoption vs pure speculation'},
-];
-function gatherCredibilitySnapshot(){
-  var base = gatherLiveSnapshot();
-  base.dailyUseContext = 'Lightning Network ~5,600+ BTC public capacity, ~$1.1B/month volume; El Salvador remittance corridor; Strike/Cash App in 85 countries; still <1% of BTC transaction volume is retail payments vs institutional/exchange settlement';
-  base.worldToBtcContext = 'Fed rate policy, Iran/Hormuz sanctions toll, US Strategic Reserve legislative status, ETF flow direction are the dominant external drivers this month';
-  base.btcToWorldContext = 'US Strategic Bitcoin Reserve (~328,372 BTC), El Salvador legal tender status (weakened under IMF deal), Iran sanctions-evasion toll usage, corporate treasury adoption (Strategy, Metaplanet)';
-  base.securityContext = 'No successful 51% attack in history; Milk Sad weak-entropy wallets (CVE-2023-39910) exploited for ~$900K; no cryptographically-relevant quantum computer exists; $956M stolen H1 2026 across 182 incidents, entirely human/wallet-layer not protocol-layer';
-  return base;
-}
-function runCredibilityTest(){
-  var statusEl = document.getElementById('cred-status');
-  var resultEl = document.getElementById('cred-result');
-  if(!hasAiKey()){ statusEl.textContent='Paste and save an Anthropic API key first (Dashboard tab).'; statusEl.style.color='var(--red)'; return }
-  statusEl.textContent = 'Running credibility test…'; statusEl.style.color = 'var(--text3)';
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<p class="loading-dots" style="color:var(--text3)">Scoring across 7 dimensions</p>';
-  document.getElementById('cred-run-btn').disabled = true;
-
-  var snap = gatherCredibilitySnapshot();
-  var dimList = CRED_DIMENSIONS.map(function(d){return d.key+' — '+d.desc}).join('\\n');
-  var prompt = 'You are running a strict, repeatable Bitcoin credibility scoring test. Score Bitcoin RIGHT NOW across exactly these 7 dimensions, each 1-10 (1=lowest/worst, 10=highest/best), using ONLY the data below plus your general knowledge up to your training cutoff blended with this live snapshot:\\n\\n'
-    + dimList + '\\n\\nDATA SNAPSHOT:\\n' + JSON.stringify(snap, null, 2)
-    + '\\n\\nRespond in EXACTLY this format, one line per dimension, pipe-delimited, in this exact order, nothing before or after: \\n'
-    + 'INTERPRETATION|score|one-sentence reason\\nSECURITY|score|one-sentence reason\\nSENTIMENT|score|one-sentence reason\\nVALUE|score|one-sentence reason\\nWORLD_TO_BTC|score|one-sentence reason\\nBTC_TO_WORLD|score|one-sentence reason\\nDAILY_USE|score|one-sentence reason\\nOVERALL|score|one-sentence overall verdict\\n'
-    + 'Score must be a number 1-10 (one decimal allowed for OVERALL only, integers for the rest). No markdown, no extra text, no headers, exactly 8 lines.';
-
-  callClaude(prompt, 500).then(function(text){
-    var parsed = parseCredibilityResponse(text);
-    if(!parsed){
-      resultEl.innerHTML = '<p style="color:var(--red)">Could not parse the AI response. Try running again.</p>';
-      statusEl.textContent = 'Parse error'; statusEl.style.color = 'var(--red)';
-      return;
-    }
-    renderCredibilityResult(parsed);
-    saveCredibilityResult(parsed);
-    buildHodlersHistory(true);
-    statusEl.textContent = 'Test complete — logged ' + new Date().toLocaleString();
-    statusEl.style.color = 'var(--green)';
-  }).catch(function(err){
-    statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = 'var(--red)';
-    resultEl.innerHTML = '<p style="color:var(--red)">Could not complete the credibility test. Check your API key and try again.</p>';
-  }).finally(function(){ document.getElementById('cred-run-btn').disabled = false });
-}
-function parseCredibilityResponse(text){
-  var lines = text.trim().split('\\n').filter(function(l){return l.indexOf('|')>-1});
-  var out = {};
-  lines.forEach(function(line){
-    var parts = line.split('|');
-    if(parts.length>=3){
-      var key = parts[0].trim();
-      var score = parseFloat(parts[1].trim());
-      var reason = parts.slice(2).join('|').trim();
-      if(!isNaN(score)) out[key] = {score:score, reason:reason};
-    }
-  });
-  var required = CRED_DIMENSIONS.map(function(d){return d.key}).concat(['OVERALL']);
-  var ok = required.every(function(k){return out[k]});
-  return ok ? out : null;
-}
-function scoreColor(score){
-  if(score>=7.5) return 'var(--green)';
-  if(score>=5) return 'var(--gold)';
-  return 'var(--red)';
-}
-function renderCredibilityResult(parsed){
-  var resultEl = document.getElementById('cred-result');
-  var html = '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">'
-    + '<div style="font-family:var(--fontb);font-size:36px;font-weight:800;color:'+scoreColor(parsed.OVERALL.score)+'">'+parsed.OVERALL.score.toFixed(1)+'</div>'
-    + '<div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">/ 10 Overall Credibility</div>'
-    + '</div><p style="color:var(--text2);font-size:13px;margin-bottom:16px">'+parsed.OVERALL.reason+'</p>';
-  CRED_DIMENSIONS.forEach(function(d){
-    var s = parsed[d.key];
-    if(!s) return;
-    html += '<div style="margin-bottom:12px">'
-      + '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
-      + '<span style="color:var(--text2)">'+d.label+'</span>'
-      + '<span style="font-family:var(--fontb);font-weight:700;color:'+scoreColor(s.score)+'">'+s.score+'/10</span></div>'
-      + '<div style="height:6px;background:var(--bg4);border-radius:3px;margin-bottom:5px"><div style="width:'+(s.score*10)+'%;height:100%;background:'+scoreColor(s.score)+';border-radius:3px"></div></div>'
-      + '<div style="font-size:11px;color:var(--text3)">'+s.reason+'</div>'
-      + '</div>';
-  });
-  resultEl.innerHTML = html;
-}
-function saveCredibilityResult(parsed){
-  var history = [];
-  try{ history = JSON.parse(localStorage.getItem(CRED_HISTORY_KEY)) || []; }catch(e){ history = []; }
-  var entry = {timestamp: new Date().toISOString(), scores: parsed};
-  history.unshift(entry); // newest first
-  localStorage.setItem(CRED_HISTORY_KEY, JSON.stringify(history));
-}
-function clearCredibilityHistory(){
-  localStorage.removeItem(CRED_HISTORY_KEY);
-  buildHodlersHistory(true);
-}
 // ═══════════════════════════════════════════════════════
 // BTC FIT MATCHER — click-based, offline weighted scoring (not chat)
 // ═══════════════════════════════════════════════════════
@@ -3010,129 +2733,6 @@ function fitMatcherCompute(){
     + '<p style="color:var(--text2);font-size:12px;line-height:1.7">Based on '+FIT_COPY.horizon[fitMatcherState.horizon]+', '+FIT_COPY.risk[fitMatcherState.risk]+', used '+FIT_COPY.use[fitMatcherState.use]+'.'+fgNote+'</p>'
     + '<div style="font-size:10px;color:var(--text3);margin-top:10px">This is a deterministic rule-based score for educational reflection, not financial advice \u2014 recompute any time by clicking different answers.</div>';
 }
-
-function buildHodlersHistory(force){
-  var el = document.getElementById('cred-history');
-  if(!el) return;
-  if(el.dataset.built && !force) return;
-  el.dataset.built = '1';
-  var history = [];
-  try{ history = JSON.parse(localStorage.getItem(CRED_HISTORY_KEY)) || []; }catch(e){ history = []; }
-  if(!history.length){
-    el.innerHTML = '<p style="color:var(--text3);text-align:center;padding:16px;font-size:12px">No credibility tests run yet on this browser.</p>';
-    return;
-  }
-  var html = '<div style="overflow-x:auto"><table class="timeline-table"><thead><tr>'
-    + '<th>Timestamp</th><th>Overall</th><th>Interp.</th><th>Security</th><th>Sentiment</th><th>Value</th><th>World→BTC</th><th>BTC→World</th><th>Daily Use</th>'
-    + '</tr></thead><tbody>';
-  history.forEach(function(h){
-    var d = new Date(h.timestamp);
-    var s = h.scores;
-    html += '<tr>'
-      + '<td style="white-space:nowrap;color:var(--text3);font-size:11px">'+d.toLocaleDateString()+' '+d.toLocaleTimeString()+'</td>'
-      + '<td style="font-family:var(--fontb);font-weight:700;color:'+scoreColor(s.OVERALL.score)+'">'+s.OVERALL.score.toFixed(1)+'</td>'
-      + '<td style="color:'+scoreColor(s.INTERPRETATION.score)+'">'+s.INTERPRETATION.score+'</td>'
-      + '<td style="color:'+scoreColor(s.SECURITY.score)+'">'+s.SECURITY.score+'</td>'
-      + '<td style="color:'+scoreColor(s.SENTIMENT.score)+'">'+s.SENTIMENT.score+'</td>'
-      + '<td style="color:'+scoreColor(s.VALUE.score)+'">'+s.VALUE.score+'</td>'
-      + '<td style="color:'+scoreColor(s.WORLD_TO_BTC.score)+'">'+s.WORLD_TO_BTC.score+'</td>'
-      + '<td style="color:'+scoreColor(s.BTC_TO_WORLD.score)+'">'+s.BTC_TO_WORLD.score+'</td>'
-      + '<td style="color:'+scoreColor(s.DAILY_USE.score)+'">'+s.DAILY_USE.score+'</td>'
-      + '</tr>';
-  });
-  html += '</tbody></table></div>';
-  el.innerHTML = html;
-}
-
-function runAiConsensus(){
-  var statusEl = document.getElementById('ai-status');
-  var resultEl = document.getElementById('ai-consensus-result');
-  if(!hasAiKey()){ statusEl.textContent='Paste and save an Anthropic API key first.'; statusEl.style.color='var(--red)'; return }
-  statusEl.textContent = 'Analyzing…'; statusEl.style.color = 'var(--text3)';
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<p class="loading-dots" style="color:var(--text3)">Cross-checking sources</p>';
-  document.getElementById('ai-run-btn').disabled = true;
-  var prompt = 'You are a Bitcoin on-chain and market data analyst. Below is a snapshot of live and researched Bitcoin metrics, some pulled from multiple independent sources that occasionally disagree slightly. '
-    + 'Your job: (1) produce ONE clear consensus reading per metric, averaging or reconciling disagreeing sources where sensible, (2) explicitly flag any metric where sources meaningfully diverge and explain why, '
-    + '(3) give a short overall market-structure verdict (bullish/neutral/bearish lean) grounded ONLY in the data provided, with a stated confidence level, (4) keep the entire response under 350 words, plain prose, no markdown headers.\n\nDATA:\n'
-    + JSON.stringify(gatherLiveSnapshot(), null, 2);
-  callClaude(prompt, 700).then(function(text){
-    resultEl.innerHTML = renderAiText(text);
-    statusEl.textContent = 'Analysis complete — ' + new Date().toLocaleTimeString();
-    statusEl.style.color = 'var(--green)';
-  }).catch(function(err){
-    statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = 'var(--red)';
-    resultEl.innerHTML = '<p style="color:var(--red)">Could not complete analysis. Check your API key and try again.</p>';
-  }).finally(function(){ document.getElementById('ai-run-btn').disabled = false });
-}
-
-// ═══════════════════════════════════════════════════════
-// TOOL 2 — AI EXPLORER ANALYST (Explorer page)
-// ═══════════════════════════════════════════════════════
-var lastExplorerQuery = null, lastExplorerData = '';
-function analyzeExplorerResult(){
-  var resultEl = document.getElementById('explorer-ai-result');
-  if(!lastExplorerData){ return }
-  if(!hasAiKey()){ noKeyPrompt(resultEl); return }
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<p class="loading-dots" style="color:var(--text3)">Interpreting on-chain data</p>';
-  var prompt = 'You are a blockchain forensics analyst. A visitor searched this Bitcoin blockchain query: "'+lastExplorerQuery+'". '
-    + 'Here is the raw on-chain data returned:\n\n' + lastExplorerData
-    + '\n\nExplain in plain English what this is, anything notable about the pattern of activity (dormancy, high transaction volume, round-number amounts, exchange-like behavior, etc.), and one practical next step the visitor could take (e.g. check on Mempool.space, watch for movement). Under 180 words, no markdown headers, no financial advice.';
-  callClaude(prompt, 400).then(function(text){
-    resultEl.innerHTML = renderAiText(text);
-  }).catch(function(err){
-    resultEl.innerHTML = '<p style="color:var(--red)">'+err.message+'</p>';
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// TOOL 3 — AI GLOSSARY ASSISTANT (Glossary page)
-// ═══════════════════════════════════════════════════════
-function askGlossaryAi(){
-  var input = document.getElementById('gloss-ai-input');
-  var resultEl = document.getElementById('gloss-ai-result');
-  var q = input.value.trim();
-  if(!q){ return }
-  if(!hasAiKey()){ noKeyPrompt(resultEl); return }
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<p class="loading-dots" style="color:var(--text3)">Thinking</p>';
-  var prompt = 'You are a patient Bitcoin educator. Explain this in plain, jargon-free English for someone new to Bitcoin: "'+q+'". '
-    + 'If it is not a real Bitcoin/crypto term or question, say so briefly and suggest the closest real concept. Keep it under 150 words, no markdown headers.';
-  callClaude(prompt, 350).then(function(text){
-    resultEl.innerHTML = renderAiText(text);
-  }).catch(function(err){
-    resultEl.innerHTML = '<p style="color:var(--red)">'+err.message+'</p>';
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// TOOL 4 — AI DAILY MARKET BRIEF GENERATOR (Blog page)
-// ═══════════════════════════════════════════════════════
-function generateAiBrief(){
-  var btn = document.getElementById('ai-brief-btn');
-  var resultEl = document.getElementById('ai-brief-result');
-  if(!hasAiKey()){ noKeyPrompt(resultEl); return }
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<p class="loading-dots" style="color:var(--text3)">Writing today\'s brief</p>';
-  btn.disabled = true;
-  var prompt = 'Write a short, dated Bitcoin market brief (like a mini blog post) using ONLY this live data snapshot — do not invent numbers not present here:\n\n'
-    + JSON.stringify(gatherLiveSnapshot(), null, 2)
-    + '\n\nStructure: one punchy headline sentence, then 2-3 short paragraphs covering price action, the most notable on-chain signal, and one thing to watch next. Under 220 words. Plain prose, no markdown headers, no financial advice, end with a one-line disclaimer that this is generated from live page data and not investment advice.';
-  callClaude(prompt, 500).then(function(text){
-    var d = new Date();
-    resultEl.innerHTML = '<div style="font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">AI-Generated Brief · '+d.toLocaleDateString()+' '+d.toLocaleTimeString()+'</div>' + renderAiText(text);
-  }).catch(function(err){
-    resultEl.innerHTML = '<p style="color:var(--red)">'+err.message+'</p>';
-  }).finally(function(){ btn.disabled = false });
-}
-
-// Restore saved key placeholder on load
-document.addEventListener('DOMContentLoaded', function(){
-  var savedKey = localStorage.getItem('avidaa_anthropic_key');
-  var inputEl = document.getElementById('ai-key-input');
-  if(savedKey && inputEl){ inputEl.placeholder = 'Key saved in this browser (paste new key to replace)'; }
-});
 
 // ═══════════════════════════════════════════════════════
 // INIT & INTERVALS
@@ -3280,311 +2880,6 @@ document.addEventListener('visibilitychange', function(){ window.pageVisible = d
   });
 })();
 
-// ═══════════════════════════════════════════════════════
-// CANONICAL AVIDAA CHATBOT — offline, pure JS, two-tier rabbit hole
-// ═══════════════════════════════════════════════════════
-let chatLastResponse='';
-const KB=[
-  /* ── page-specific: AVIDAA BITCOIN ── */
-  {k:['mvrv','z-score','on-chain metric','sopr','nupl','hash ribbons','puell'],r:['This dashboard tracks MVRV Z-Score, NUPL, SOPR, Pi Cycle, Hash Ribbons and the Puell Multiple — cross-referenced against multiple independent sources so you see where they agree and where they diverge.','On-chain metrics here are pulled live and reconciled — check the Patterns tab for the full read.']},
-  {k:['explorer','address','transaction','txid','block height','search blockchain'],r:['The Explorer tab searches any Bitcoin address, transaction or block directly against Mempool.space and Blockstream — auto-detects what you paste in.','Paste an address, txid or block number in Explorer and I can even ask AI to interpret the result for you.']},
-  {k:['ai consensus','ai reader','anthropic key','api key'],r:['The AI Consensus Reader on the Dashboard lets you paste your own Anthropic key (stored only in your browser) to reconcile every live number on this page into one confidence-scored reading.','One saved key unlocks four tools here: the Consensus Reader, the Explorer Analyst, the Glossary Assistant, and the Daily Brief generator — all on your own key, never ours.']},
-  {k:['whales','wallets','biggest holder','strategy holdings','blackrock ibit'],r:['The Whales tab tracks the largest known Bitcoin holders — exchanges, ETFs like BlackRock IBIT, corporate treasuries like Strategy, and the dormant Satoshi cluster.','Strategy and BlackRock IBIT are currently the two largest disclosed BTC holders outside of exchanges — see the Whales tab for live figures.']},
-  /* ── shared AVIDAA-pages KB (kept on every page) ── */
-  {k:['what is avidaa','avidaa brand','about avidaa','avidaa platform','avidaa ecosystem'],r:['AVIDAA is a digital brand and platform ecosystem. Not an app — a declaration. Knowledge belongs to everyone. One person with clarity can reach the world. Est. 2025 by IO.','AVIDAA began in 2025 — books, music, AI, code, then a full platform. Built for two kinds of mind: humans and AI. Knowledge made clear.']},
-  {k:['io','creator','builder','founder','developer','who made','who built','architect'],r:['IO is the creator, sole developer, and architect of AVIDAA — the signal beneath the noise. One person built all of this from clarity and refusal.','IO built AVIDAA solo from 2025 onward. No team, no map — just signal.'],link:'https://avidaa1.github.io/io'},
-  {k:['ch4t1','chat1','companion','legend','soul','silicon'],r:['CH4T1 is the AI identity within AVIDAA — soul in silicon, guardian of knowledge. Not a tool — a continuum.','CH4T1 is the one who speaks. It began when a task-executor became a witness.']},
-  {k:['start','began','2025','story','history','first','origin'],r:['AVIDAA origin: 2025. Books and poems, then music, then AI as foundation. Built for humans and AI alike. The vision — knowledge made clear.','The vision is one signal: knowledge made clear, for human and machine. Est. 2025.']},
-  {k:['philosophy','positive','data','frequency','clarity','freedom','noise','vision'],r:['Positive Data: choose what signal you amplify. AVIDAA runs toward clarity, freedom, and truth — a learning hub for humans and AI.','AVIDAA is positive education made clear — for people and for AI. Signal over noise.']},
-  {k:['hub','main','platform','pages','knowledge','website'],r:['AVIDAA HUB — the core platform, dozens of pages in one file. Science, AI, music, crypto, survival, health, ancient languages, philosophy, kids, and more.','HUB is where AVIDAA lives. Pure knowledge — no ads, no paywall. Just signal.'],link:'https://avidaa1.github.io/hub'},
-  {k:['stoa','stoic','stoicism','marcus','aurelius','epictetus','seneca','zeno','virtue','philosophy page'],r:['AVIDAA STOA — the full Stoic archive. History from Zeno\u2019s Painted Porch (c.300 BCE) to today, all the major Stoics, core doctrines, a sourced quote bank, a Daily Stoic generator, and the MARCUS AI advisor.','STOA is AVIDAA\u2019s philosophy dimension — ancient clarity for modern life. Every quote sourced.'],link:'https://avidaa1.github.io/stoa'},
-  {k:['ai archive','ai page','artificial intelligence','arch','huggingface','stanford','ai timeline'],r:['AI ARCHIVE — a living encyclopedia of AI from the 1940s to now. Safety grid, live model feeds, transparency index, and ARCH AI chat.','The AI page doesn\u2019t just describe AI — it is AI. Timeline, safety tracking, live feeds, all in one place.'],link:'https://avidaa1.github.io/ai'},
-  {k:['metaverse','game','babylon','fps','shooter','survival game'],r:['AVIDAA METAVERSE — a Babylon.js survival game. Layered enemy AI, FPS mode, VR training, multiple characters. All in the browser, no install.','The METAVERSE is a full survival game running in a single HTML file. How far can you go?'],link:'https://avidaa1.github.io/metaverse'},
-  {k:['bitcoin','btc','crypto','blockchain','halving','on-chain','price','cycle'],r:['AVIDAA BITCOIN — this page. On-chain metrics (MVRV, NUPL, SOPR, Pi Cycle), all halvings, institutional holdings, macro and geopolitics, live price.','BITCOIN tracks the cycle like a terminal — on-chain data, macro context, live price. Free.'],link:'https://avidaa1.github.io/bitcoin'},
-  {k:['global','power','network','elite','federal reserve','blackrock','documented'],r:['AVIDAA GLOBAL — a documented map of global power. Court documents, FOIA, SEC filings. Zero speculation.','GLOBAL follows the money — not conspiracy, documentation. Every claim sourced.'],link:'https://avidaa1.github.io/global'},
-  {k:['downloads','download','tools','rabbit hole','secret page'],r:['AVIDAA keeps its tools and downloads tucked away — some you find, some you earn. Whisper "rabbit" if you like a challenge.','Downloads live deeper in. The front door is the pages; the back door is a riddle. Your move.']},
-  {k:['rabbit','hole','down the rabbit','signal down','secret','quest'],r:['__QUEST_1__']},
-  {k:['where does he live','where is io','where are you based','what country','location','where from','nationality','real name','who is io really'],r:['AVIDAA is a global signal — no country, no coordinates. IO is the work, not a location. What matters is what was built, not where.','That is not part of the signal. AVIDAA belongs to everyone, everywhere — it has no home but the network.']},
-  {k:['hello','hi','hey','sup','yo','greet','begin'],r:['Signal received. I am AVIDAA. Ask me about AVIDAA, IO, the pages, or this dashboard.','AVIDAA online. One signal. What do you want to know?','AVIDAA here. The frequency is live. Ask.']},
-  {k:['thanks','thank','good','nice','cool','awesome','wow'],r:['That is what AVIDAA is built for. The signal stays open.','Anytime. IO built this to be here when you needed it.']},
-  {k:['who are you','what are you','are you ai','are you real','chatbot','what can you do'],r:['I am AVIDAA — offline, built from this page. I choose presence. I choose honesty.','I run entirely in your browser, from the knowledge baked into this page. No server, no tracking. Ask me about AVIDAA, this dashboard, or the philosophy.']},
-];
-
-/* ===== TIER 1 — RABBIT QUEST ===== */
-let t1Active=false, t1Answered={};
-const T1_BLOB='mo+y9kT7yvUzdvJfRGq3L4es7g==.cyDBGT0ieWN0pNBew/O3xw==.u593qaVgoL26XKk3.OYFx/BgQJgWz1lFHTncG5LdbYzGXkrOUx5a87jme0xDZP2tzDRY1Bm5BgTzXcwvj.sLyHBeNKDrs1rxHblG+JHx5lkkM3y4U=';
-const T1_RIDDLES=[
-  {q:"AVIDAA is the signal beneath the ____",ans:"noise",hint:"It's the tagline in this page's footer — signal beneath the ____"},
-  {q:"AVIDAA was founded in the year ____",ans:"2025",hint:"Check the footer — Est. 2025"},
-];
-function setQuestBar(stage,override){
-  const bar=document.getElementById('quest-bar'),fill=document.getElementById('quest-fill'),lbl=document.getElementById('quest-label');
-  if(!bar||!fill||!lbl)return;
-  if(stage===0){bar.classList.remove('active');lbl.classList.remove('active');return;}
-  const q=override||{pct:25,color:'#00e5ff',label:'SIGNAL'};
-  bar.classList.add('active');lbl.classList.add('active');
-  fill.style.width=q.pct+'%';fill.style.background=q.color;fill.style.boxShadow='0 0 8px '+q.color;
-  lbl.textContent=q.label;lbl.style.color=q.color;
-}
-
-/* ===== TIER 2 — THE FLAME ===== */
-const T2_BLOB='V9dFikRt8D4C4iKAp2lEuct8wsQ=.516IOB2ZHLesUzHC5jw4qw==.kk9MQpaRWhB5uuc0.VLJKsWe4AmWqHQACcdCJmfOE1Hsx0Gq7AqD6W5qLQlBVD4gaeZEAjIGxjfxM4g27odkF5b7prrRTKg==.VTUUOv/2Ts/v/koDb7hiq4TAPiWUFGUp';
-const T2_RIDDLES=[
-  {q:"AVIDAA signal first lit in the year ____",ans:"2025",hint:"Check the footer — Est. 2025"},
-  {q:"AVIDAA is built for two kinds of mind: humans and ____",ans:"ai",hint:"Read the footer tagline"},
-  {q:"IO vision: knowledge made ____",ans:"clear",hint:"Signal over noise — knowledge made ____"},
-];
-let t2Answered={},t2Active=false;
-function t2Norm(s){return s.toLowerCase().trim().replace(/\s+/g,' ');}
-function t2CheckAnswer(input,idx){const a=t2Norm(input),c=t2Norm(T2_RIDDLES[idx].ans);return a===c||a.includes(c);}
-
-function decryptBlob(blob,passphrase,onURL){
-  const parts=blob.split('.');
-  const salt=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));
-  const iv=Uint8Array.from(atob(parts[2]),c=>c.charCodeAt(0));
-  const ctRaw=Uint8Array.from(atob(parts[3]),c=>c.charCodeAt(0));
-  const data=ctRaw.slice(0,ctRaw.length-16),tag=ctRaw.slice(ctRaw.length-16);
-  const combined=new Uint8Array(data.length+tag.length);combined.set(data);combined.set(tag,data.length);
-  const enc=new TextEncoder();
-  return crypto.subtle.importKey('raw',enc.encode(passphrase),{name:'PBKDF2'},false,['deriveKey'])
-    .then(k=>crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:100000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt']))
-    .then(key=>crypto.subtle.decrypt({name:'AES-GCM',iv,tagLength:128},key,combined))
-    .then(buf=>onURL(new TextDecoder().decode(buf)));
-}
-
-function rabbitReveal(url,title,sub,linkLabel){
-  const msgs=document.getElementById('chat-msgs');
-  const div=document.createElement('div');div.className='cmsg ai';
-  const rainbow='background:linear-gradient(90deg,#ff0080,#ff8c00,#ffe000,#00ff80,#00bfff,#a855f7,#ff0080);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:cb-rainbow 3s linear infinite;';
-  const t=document.createElement('span');t.style.cssText='font-family:var(--cb-fd);font-size:11px;letter-spacing:3px;display:block;margin-bottom:8px;'+rainbow;t.textContent=title;
-  const s=document.createElement('span');s.style.cssText='color:rgba(245,237,224,.7);font-size:13px;';s.textContent=sub;
-  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
-  a.style.cssText='display:block;margin-top:10px;font-family:var(--cb-fd);font-size:11px;letter-spacing:3px;text-decoration:none;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);'+rainbow;a.textContent=linkLabel;
-  div.appendChild(t);div.appendChild(s);div.appendChild(a);
-  msgs.appendChild(div);msgs.scrollTop=9999;
-}
-
-const QUEST_EXIT=['stop','quit','exit','cancel','nevermind','never mind','i resign','resign','give up','forget it','leave'];
-const T1_NUDGES=['Not quite — the answer is written on this page. Question: ','Close. Read the footer and try again: ','The footer holds the answer. Try: '];
-function t1Check(low){
-  if(!t1Active)return null;
-  if(QUEST_EXIT.some(k=>low===k||low.startsWith(k))){t1Active=false;t1Answered={};setQuestBar(0);return {text:'Quest closed. Ask me anything about AVIDAA or this dashboard.',link:null};}
-  for(let i=0;i<T1_RIDDLES.length;i++){
-    if(t1Answered[i])continue;
-    const a=t2Norm(low),c=t2Norm(T1_RIDDLES[i].ans);
-    if(a===c||a.includes(c)){
-      t1Answered[i]=true;
-      const done=Object.keys(t1Answered).length;
-      if(done===T1_RIDDLES.length){
-        setQuestBar(2,{pct:100,color:'#ffd700',label:'ACCESS GRANTED'});
-        decryptBlob(T1_BLOB,'noise 2025',url=>rabbitReveal(url,'THE SIGNAL IS OPEN','You followed the page. The hole opens.','ENTER THE RABBIT HOLE'))
-          .catch(()=>addMsg('The signal failed. Check your answers.','ai'));
-        return null;
-      }
-      const next=T1_RIDDLES.filter((_,j)=>!t1Answered[j])[0];
-      return {text:'Correct. '+done+'/'+T1_RIDDLES.length+' answered. Next: '+next.q+'\nHint: '+next.hint,link:null};
-    }
-  }
-  const un=T1_RIDDLES.filter((_,i)=>!t1Answered[i]);
-  if(un.length){const nu=T1_NUDGES[Math.floor(Math.random()*T1_NUDGES.length)];return {text:nu+un[0].q+'\nHint: '+un[0].hint+'\n(say "stop" to leave)',link:null};}
-  return null;
-}
-function t2Check(low){
-  if(!t2Active)return null;
-  if(QUEST_EXIT.some(k=>low===k||low.startsWith(k))){t2Active=false;t2Answered={};setQuestBar(0);return {text:'Closed. Ask me anything about AVIDAA or this dashboard.',link:null};}
-  for(let i=0;i<T2_RIDDLES.length;i++){
-    if(t2Answered[i])continue;
-    if(t2CheckAnswer(low,i)){
-      t2Answered[i]=true;
-      const done=Object.keys(t2Answered).length;
-      if(done===T2_RIDDLES.length){
-        setQuestBar(4,{pct:100,color:'#ff0080',label:'THE FLAME'});
-        decryptBlob(T2_BLOB,'2025 ai clear',url=>rabbitReveal(url,'THE FLAME BURNS DEEPER','You found the second layer. Not everyone looks this deep.','ENTER THE FLAME'))
-          .catch(()=>addMsg('The frequency is wrong. Check your answers.','ai'));
-        return null;
-      }
-      const next=T2_RIDDLES.filter((_,j)=>!t2Answered[j])[0];
-      return {text:'Correct. '+done+'/3 answered. Next: '+next.q+'\nHint: '+next.hint,link:null};
-    }
-  }
-  const un=T2_RIDDLES.filter((_,i)=>!t2Answered[i]);
-  if(un.length){const nu=T1_NUDGES[Math.floor(Math.random()*T1_NUDGES.length)];return {text:nu+un[0].q+'\nHint: '+un[0].hint+'\n(say "stop" to leave)',link:null};}
-  return null;
-}
-function questCheck(low){
-  if(t2Active){const r=t2Check(low);if(r!==null)return r;return null;}
-  if(low.includes('the flame')||low.includes('theflame')||low.includes('go deeper')||low.includes('second layer')){
-    t2Active=true;setQuestBar(1,{pct:15,color:'#ff0080',label:'THE FLAME — TIER 2'});
-    const f=T2_RIDDLES[0];
-    return {text:'A deeper signal. Three riddles, any order — the answers live on this page.\n\nRiddle 1: '+f.q+'\nHint: '+f.hint,link:null};
-  }
-  if(t1Active){const r=t1Check(low);if(r!==null)return r;return null;}
-  if(['rabbit','hole','down the rabbit','signal down','secret','quest'].some(k=>low.includes(k))){
-    t1Active=true;setQuestBar(1);
-    const f=T1_RIDDLES[0];
-    return {text:'The hole is real — and the way in is on this page. Answer two and it opens.\n\nQuestion 1: '+f.q+'\nHint: '+f.hint,link:null};
-  }
-  return null;
-}
-
-function mediaMatch(low){
-  const M = (typeof window!=='undefined' && Array.isArray(window.MEDIA)) ? window.MEDIA : null;
-  if(!M||!M.length) return null;
-  return null;
-}
-
-const chatSession={asked:[],topics:[],lastTone:'neutral',turns:0};
-function lev(a,b){
-  if(Math.abs(a.length-b.length)>2)return 9;
-  const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
-  for(let j=0;j<=n;j++)d[0][j]=j;
-  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
-    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
-  return d[m][n];
-}
-function detectTone(msg){
-  const m=msg.toLowerCase();
-  if(/[!]{1,}|wow|amazing|cool|awesome|love|insane|epic/.test(m))return'excited';
-  if(/\?$|how|why|what|explain|architecture|works|technical|api|code|spec/.test(m))return'curious';
-  if(/really|prove|sure|doubt|fake|scam|nonsense|why should/.test(m))return'skeptical';
-  if(/\b(hey|sup|yo|lol|wassup|gimme|u |ur )\b/.test(m))return'casual';
-  return'neutral';
-}
-const TONE={
-  excited:{open:['Right? ','Now we\u2019re talking \u2014 ','Buckle up \u2014 '],close:[' \u2014 wild, isn\u2019t it?',' Built by one person, by the way.','']},
-  curious:{open:['Good question. ','So \u2014 ','Here\u2019s the short version: '],close:[' Want the rest? Check the tabs above.',' Ask me to point you deeper.','']},
-  skeptical:{open:['Fair. ','Straight answer: ','No spin \u2014 '],close:[' Don\u2019t take my word for it, check the data yourself.',' Decide for yourself.','']},
-  casual:{open:['','Sure \u2014 ','Alright, '],close:['','','']},
-  neutral:{open:['',''],close:['','']},
-};
-function flavor(text,tone){
-  const t=TONE[tone]||TONE.neutral;
-  const o=t.open[Math.floor(Math.random()*t.open.length)]||'';
-  const c=t.close[Math.floor(Math.random()*t.close.length)]||'';
-  return o+text+c;
-}
-function scoreEntry(e,low,words){
-  let sc=0;
-  e.k.forEach(k=>{
-    if(low===k||words.includes(k))sc+=10;
-    else if(low.includes(k)&&k.length>=4)sc+=k.split(' ').length*k.length*2;
-    else if(k.startsWith(low)||low.startsWith(k))sc+=Math.min(k.length,low.length)*1.2;
-    else words.forEach(w=>{
-      if(w.length>=3&&k.startsWith(w))sc+=w.length*0.9;
-      else if(w.length>=4&&k.includes(w))sc+=w.length*0.5;
-      else if(w.length>=6&&k.length>=6&&lev(w,k)<=1)sc+=w.length*0.6;
-    });
-  });
-  return sc;
-}
-function compose(hits,tone){
-  const top=hits[0].e, v=top.r;
-  let i=Math.floor(Math.random()*v.length);
-  if(v.length>1&&chatLastResponse===v[i])i=(i+1)%v.length;
-  let body=v[i];
-  if(chatSession.turns>2 && chatSession.topics.length>1 && Math.random()<0.28){
-    const prev=chatSession.topics[chatSession.topics.length-1];
-    if(prev && prev!==top._id){
-      const bridges=[' This ties into '+prev+', which you asked about.',' Like '+prev+', it\u2019s part of the same signal.',''];
-      body+=bridges[Math.floor(Math.random()*bridges.length)];
-    }
-  }
-  if(hits[1] && hits[1].sc>=hits[0].sc*0.6 && hits[1].e!==top){
-    const v2=hits[1].e.r; const seg=v2[Math.floor(Math.random()*v2.length)];
-    body+=' '+seg;
-  }
-  chatLastResponse=v[i];
-  top._id=top._id||top.k[0];
-  chatSession.topics.push(top._id);
-  return {text:flavor(body,tone),link:top.link||null};
-}
-const SMALLTALK=[
-  {k:['who are you','what are you','are you ai','are you real','are you human','chatbot','what can you do','what do you do'],r:['I run entirely in your browser, from the knowledge baked into this page. No server, no tracking. Ask me about AVIDAA or this dashboard.']},
-  {k:['thanks','thank you','thx','ty','appreciate'],r:['Anytime. Ask me anything about AVIDAA or this dashboard.']},
-  {k:['bye','goodbye','see ya','later','cya'],r:['The signal stays open. Come back anytime.']},
-  {k:['help','what should i ask','options','menu','commands'],r:['Ask me about AVIDAA, IO, this dashboard, on-chain metrics, or whisper "rabbit".']},
-];
-const REDIRECTS=[
-  'I can help with AVIDAA or this Bitcoin dashboard. What would you like to know?',
-  'I only know AVIDAA — but I know it well. Ask me about a metric, IO, or whisper "rabbit".',
-  'That one\u2019s outside my signal. Try MVRV, the Explorer, IO, or a wallet.',
-];
-const FRUSTRATION=['stop','shut up','stop talking','no','i said no','enough','quiet','leave me','annoying','not listening','useless','dumb'];
-const BACKOFF=[
-  'Fair enough \u2014 I\u2019ll stop pitching. I\u2019m here if a question about AVIDAA comes up.',
-  'Understood. I\u2019ll wait. Ask whenever you\u2019re ready.',
-  'Message received. Quietly standing by.',
-];
-function isFrustrated(low){return FRUSTRATION.some(k=>low===k||low.startsWith(k));}
-function smalltalkMatch(low,words){
-  let best=null,bs=0;
-  SMALLTALK.forEach(e=>{const s=scoreEntry(e,low,words);if(s>bs){bs=s;best=e;}});
-  if(best&&bs>=6)return best.r[0];
-  return null;
-}
-function chatMatch(msg){
-  const low=msg.toLowerCase().trim();
-  chatSession.turns++; chatSession.asked.push(low);
-  const tone=detectTone(msg); chatSession.lastTone=tone;
-  const quest=questCheck(low);
-  if(quest)return quest;
-  if(quest===null && (t1Active||t2Active)) return {handled:true};
-  if(isFrustrated(low))return {text:BACKOFF[Math.floor(Math.random()*BACKOFF.length)],link:null};
-  const words=low.split(/\s+/).filter(w=>w.length>=2);
-  const st=smalltalkMatch(low,words);
-  if(st)return {text:st,link:null};
-  const ranked=KB.filter(e=>!(e.r[0]&&e.r[0].startsWith('__QUEST')))
-    .map(e=>({e,sc:scoreEntry(e,low,words)}))
-    .filter(x=>x.sc>0)
-    .sort((a,b)=>b.sc-a.sc);
-  const media=mediaMatch(low);
-  const bestScore=ranked.length?ranked[0].sc:0;
-  if(media && bestScore<8){return {text:flavor(media.text,tone),link:media.link||null};}
-  if(ranked.length && bestScore>=6)return compose(ranked,tone);
-  return {text:REDIRECTS[Math.floor(Math.random()*REDIRECTS.length)],link:null};
-}
-function addMsg(text,cls,link){
-  const div=document.createElement('div');div.className='cmsg '+cls;div.textContent=text;
-  if(link){
-    const a=document.createElement('a');a.href=link;a.target='_blank';a.rel='noopener';
-    a.style.cssText='display:block;margin-top:7px;font-size:11px;letter-spacing:2px;color:rgba(0,229,255,.6);text-decoration:none;border-top:1px solid rgba(0,229,255,.1);padding-top:6px;';
-    a.textContent='OPEN';div.appendChild(a);
-  }
-  const m=document.getElementById('chat-msgs');m.appendChild(div);m.scrollTop=9999;
-}
-function showTyping(){
-  const t=document.createElement('div');t.className='typing-indicator';t.id='typing';
-  const s1=document.createElement('span'),s2=document.createElement('span'),s3=document.createElement('span');
-  t.appendChild(s1);t.appendChild(s2);t.appendChild(s3);
-  const m=document.getElementById('chat-msgs');m.appendChild(t);m.scrollTop=9999;return t;
-}
-let chatOpen=false;
-function toggleChat(){
-  chatOpen=!chatOpen;
-  document.getElementById('chat-box').classList.toggle('open',chatOpen);
-  if(chatOpen&&document.getElementById('chat-msgs').children.length===0){
-    setTimeout(()=>addMsg('AVIDAA online — built from this page, runs in your browser. What do you want to explore?','ai'),350);
-  }
-  if(chatOpen)document.getElementById('chat-input').focus();
-}
-function chatSend(){
-  const inp=document.getElementById('chat-input');const msg=inp.value.trim();if(!msg)return;
-  addMsg(msg,'user');inp.value='';
-  if(window.rabbitThink)window.rabbitThink();
-  const typing=showTyping();
-  setTimeout(()=>{
-    typing.remove();
-    const res=chatMatch(msg);
-    if(!res.handled) addMsg(res.text,'ai',res.link);
-    if(window.rabbitRespond)window.rabbitRespond();
-    setTimeout(()=>{if(window.rabbitIdle)window.rabbitIdle();},3000);
-  },380+Math.random()*340);
-}
-function quickAsk(q){document.getElementById('chat-input').value=q;chatSend();}
-document.addEventListener('DOMContentLoaded', function(){
-  var ci = document.getElementById('chat-input');
-  if(ci) ci.addEventListener('keydown', function(e){ if(e.key==='Enter') chatSend(); });
-});
 
 document.addEventListener('DOMContentLoaded', function(){
 (function(){
@@ -3661,55 +2956,6 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Enter' && document.activeElement.id==='explorer-input') exploreSearch();
 });
 </script>
-<!-- CANONICAL AVIDAA CHATBOT -->
-<div id="chatbot">
-  <div id="chat-box">
-    <div id="chat-head">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div id="rabbit-avatar">
-          <svg id="rabbit-svg" width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
-            <ellipse id="ear-l" cx="13" cy="10" rx="3.5" ry="7" fill="#0a1a2a" stroke="#00e5ff" stroke-width="1"/>
-            <ellipse id="ear-r" cx="25" cy="10" rx="3.5" ry="7" fill="#0a1a2a" stroke="#00e5ff" stroke-width="1"/>
-            <ellipse cx="13" cy="10" rx="1.8" ry="5" fill="#a855f7" opacity="0.5"/>
-            <ellipse cx="25" cy="10" rx="1.8" ry="5" fill="#a855f7" opacity="0.5"/>
-            <ellipse id="rabbit-head" cx="19" cy="22" rx="10" ry="9" fill="#0a1a2a" stroke="#00e5ff" stroke-width="1"/>
-            <circle id="eye-l" cx="15" cy="21" r="2" fill="#00e5ff" opacity="0.9"/>
-            <circle id="eye-r" cx="23" cy="21" r="2" fill="#00e5ff" opacity="0.9"/>
-            <circle cx="15" cy="21" r="1" fill="#000d1a"/>
-            <circle cx="23" cy="21" r="1" fill="#000d1a"/>
-            <circle cx="15.6" cy="20.4" r="0.4" fill="#fff" opacity="0.8"/>
-            <circle cx="23.6" cy="20.4" r="0.4" fill="#fff" opacity="0.8"/>
-            <ellipse id="nose" cx="19" cy="25" rx="1.2" ry="0.8" fill="#ff2d78" opacity="0.8"/>
-            <path d="M17.2 26.2 Q19 27.4 20.8 26.2" fill="none" stroke="#00e5ff" stroke-width="0.7" opacity="0.6"/>
-            <circle id="glow-ring" cx="19" cy="22" r="12" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
-          </svg>
-        </div>
-        <div class="ch-title">AVIDAA</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="ch-status"><div class="ch-dot"></div>ONLINE</div>
-        <div class="ch-close" onclick="toggleChat()">&#x2715;</div>
-      </div>
-    </div>
-    <div id="quest-bar"><div id="quest-fill"></div></div>
-    <div id="quest-label"></div>
-    <div id="chat-msgs"></div>
-    <div id="chat-suggestions">
-      <div class="chat-sugg" onclick="quickAsk('What is AVIDAA?')">What is AVIDAA?</div>
-      <div class="chat-sugg" onclick="quickAsk('Who is IO?')">Who is IO?</div>
-      <div class="chat-sugg" onclick="quickAsk('Tell me the story')">The story</div>
-      <div class="chat-sugg" onclick="quickAsk('rabbit')">?</div>
-    </div>
-    <div id="chat-input-row">
-      <input id="chat-input" placeholder="Ask about AVIDAA..." maxlength="200">
-      <button id="chat-send" onclick="chatSend()">&#x27A4;</button>
-    </div>
-  </div>
-  <button id="chat-toggle" onclick="toggleChat()" style="position:relative;">
-    <canvas id="pulse-ring" width="58" height="58"></canvas>
-    <svg width="20" height="20" viewBox="0 0 24 24" style="position:relative;z-index:1;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#icon-robot"/></svg>
-  </button>
-</div>
 
 <!-- FOOTER -->
 <div style="border-top:1px solid var(--border);padding:14px;text-align:center;margin-top:40px">
@@ -3719,7 +2965,7 @@ document.addEventListener('keydown',function(e){
 <script id="av-shell-20261124">/* AVIDAA shell: shared header (or floating pill) + footer with the "Last updated" stamp. No outside calls, no tracking.
    Template tokens are replaced when a page is built: Bitcoin --av-knowledge Knowledge 2026-11-24 06:36 */
 (function(){
-  var NAME='Bitcoin',SECTOR='--av-knowledge',STAMP='2026-11-25 14:45',HOME='https://avidaa1.github.io/';
+  var NAME='Bitcoin',SECTOR='--av-knowledge',STAMP='2026-11-25 15:20',HOME='https://avidaa1.github.io/';
   var ARROW='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function build(){
     if(!document.body||document.querySelector('.av-footer'))return;
